@@ -134,12 +134,13 @@
         // Get current user from auth system
         const user = authManager.getUser();
         if (!user) {
-          container.innerHTML = '<p class="error-message">Please login first to view your prediction.</p>';
+          // Redirect to login page if not authenticated
+          window.location.href = '../login.html';
           return;
         }
 
         // Fetch student data from backend
-        const response = await authManager.apiCall(`/api/students/${user.username}`);
+        const response = await authManager.apiCall(`/api/students/username/${user.username}`);
         if (!response.ok) {
           throw new Error('Failed to fetch student data');
         }
@@ -151,16 +152,15 @@
           <div class="student-info">
             <h3>${student.roll} - ${student.name}</h3>
             <p><strong>Class:</strong> ${student.class_name || 'N/A'}</p>
-            <p><strong>Section:</strong> ${student.section || 'N/A'}</p>
             <p><strong>Average Marks:</strong> ${student.avg_marks || 0}%</p>
             <p><strong>Attendance:</strong> ${student.attendance || 0}%</p>
             <p><strong>Subject-wise Marks:</strong></p>
             <ul>
-              <li>📐 Mathematics: ${student.math_marks || 0}%</li>
-              <li>⚛️ Physics: ${student.physics_marks || 0}%</li>
-              <li>🧪 Chemistry: ${student.chemistry_marks || 0}%</li>
-              <li>💻 Computer Science: ${student.cs_marks || 0}%</li>
-              <li>📚 English: ${student.english_marks || 0}%</li>
+              <li>📐 Mathematics: ${student.marks.math || 0}%</li>
+              <li>⚛️ Physics: ${student.marks.physics || 0}%</li>
+              <li>🧪 Chemistry: ${student.marks.chemistry || 0}%</li>
+              <li>💻 Computer Science: ${student.marks.cs || 0}%</li>
+              <li>📚 English: ${student.marks.english || 0}%</li>
             </ul>
           </div>
 
@@ -188,11 +188,11 @@
 
         // Prepare payload for ML prediction
         const payload = {
-          math: currentStudent.math_marks || 0,
-          physics: currentStudent.physics_marks || 0,
-          chemistry: currentStudent.chemistry_marks || 0,
-          cs: currentStudent.cs_marks || 0,
-          english: currentStudent.english_marks || 0,
+          math: currentStudent.marks.math || 0,
+          physics: currentStudent.marks.physics || 0,
+          chemistry: currentStudent.marks.chemistry || 0,
+          cs: currentStudent.marks.cs || 0,
+          english: currentStudent.marks.english || 0,
           attendance: currentStudent.attendance || 0,
           avg_marks: currentStudent.avg_marks || 0
         };
@@ -272,6 +272,6 @@
     // Load data when page loads
     document.addEventListener('DOMContentLoaded', loadMyPrediction);
   </script>
-  <script src="auth.js"></script>
+  <script src="../auth.js"></script>
 </body>
 </html>

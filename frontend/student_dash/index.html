@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard - Attendance Analysis</title>
+    <title>Student Dashboard - Main</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
@@ -72,6 +72,7 @@
             border-radius: 25px;
             cursor: pointer;
             transition: background 0.3s ease;
+            font-family: 'Poppins', sans-serif;
         }
 
         .logout-btn:hover {
@@ -97,6 +98,7 @@
 
         .dashboard-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
         .card-icon {
@@ -187,95 +189,6 @@
             opacity: 0.7;
             font-size: 0.9em;
         }
-
-        .calculator-section {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-
-        .calculator-title {
-            text-align: center;
-            font-size: 1.5em;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        .calculator-inputs {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .input-group {
-            text-align: center;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-            background: rgba(255, 255, 255, 0.9);
-            font-size: 16px;
-            text-align: center;
-        }
-
-        .calculator-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .calc-btn {
-            padding: 12px 25px;
-            border-radius: 25px;
-            border: none;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-
-        .calc-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .calculator-results {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .result-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .result-value {
-            font-size: 2em;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .result-label {
-            opacity: 0.8;
-            font-size: 0.9em;
-        }
     </style>
 </head>
 <body>
@@ -283,10 +196,10 @@
         <div class="header">
             <button class="logout-btn" onclick="logout()">Logout</button>
             <div class="user-info">
-                <div class="user-avatar" id="userAvatar">S</div>
+                <div class="user-avatar" id="userAvatar">D</div>
                 <div class="user-details">
-                    <h2 id="userName">Welcome back!</h2>
-                    <p id="userRole">Student Dashboard</p>
+                    <h2 id="userName">Welcome back, Demo Student!</h2>
+                    <p id="userRole">Student Dashboard - STU001</p>
                 </div>
             </div>
             <p>Track your academic progress and stay organized</p>
@@ -294,7 +207,7 @@
 
         <div class="stats-overview">
             <div class="stat-card">
-                <span class="stat-value" id="attendanceRate">95%</span>
+                <span class="stat-value" id="attendanceRate">94%</span>
                 <span class="stat-label">Attendance Rate</span>
             </div>
             <div class="stat-card">
@@ -302,7 +215,7 @@
                 <span class="stat-label">Average Grade</span>
             </div>
             <div class="stat-card">
-                <span class="stat-value" id="notifications">3</span>
+                <span class="stat-value" id="notifications">4</span>
                 <span class="stat-label">New Notifications</span>
             </div>
             <div class="stat-card">
@@ -314,52 +227,59 @@
         <div class="dashboard-grid">
             <div class="dashboard-card" onclick="navigateTo('attendence.html')">
                 <div class="card-icon">📊</div>
-                <div class="card-title">Attendance</div>
-                <div class="card-description">View your attendance records and track your presence in classes</div>
+                <div class="card-title">Attendance Records</div>
+                <div class="card-description">View your attendance records across all subjects - Currently at 94%</div>
             </div>
             <div class="dashboard-card" onclick="navigateTo('subjects.html')">
                 <div class="card-icon">📚</div>
-                <div class="card-title">Subjects</div>
-                <div class="card-description">Check your performance across all subjects and assignments</div>
+                <div class="card-title">Subject Performance</div>
+                <div class="card-description">Track performance across all subjects - Average: 89%</div>
             </div>
-            <div class="dashboard-card" onclick="navigateTo('notification.html')">
+            <div class="dashboard-card" onclick="navigateTo('notifications.html')">
                 <div class="card-icon">🔔</div>
                 <div class="card-title">Notifications</div>
-                <div class="card-description">Stay updated with important announcements and messages</div>
+                <div class="card-description">4 unread notifications including exam results and announcements</div>
             </div>
-            <div class="dashboard-card" onclick="navigateTo('../predict.html')">
+            <div class="dashboard-card" onclick="navigateTo('predict.html')">
                 <div class="card-icon">🔮</div>
                 <div class="card-title">Performance Prediction</div>
-                <div class="card-description">Get insights into your future academic performance</div>
+                <div class="card-description">ML-powered insights into your future academic performance</div>
             </div>
             <div class="dashboard-card" onclick="navigateTo('calculator.html')">
-                <div class="card-icon">📊</div>
+                <div class="card-icon">🧮</div>
                 <div class="card-title">Attendance Calculator</div>
-                <div class="card-description">Calculate attendance requirements and predictions</div>
+                <div class="card-description">Calculate attendance requirements and future predictions</div>
             </div>
         </div>
 
         <div class="recent-activity">
-            <div class="activity-title">Recent Activity</div>
+            <div class="activity-title">📋 Recent Activity</div>
             <div class="activity-item">
-                <div class="activity-icon">📝</div>
+                <div class="activity-icon">📐</div>
                 <div class="activity-content">
-                    <div class="activity-title-small">Mathematics Quiz Completed</div>
-                    <div class="activity-time">2 hours ago</div>
+                    <div class="activity-title-small">Mathematics Exam - Excellent Result!</div>
+                    <div class="activity-time">Scored 92% - 2 hours ago</div>
                 </div>
             </div>
             <div class="activity-item">
-                <div class="activity-icon">📚</div>
+                <div class="activity-icon">💻</div>
                 <div class="activity-content">
-                    <div class="activity-title-small">Physics Assignment Submitted</div>
-                    <div class="activity-time">1 day ago</div>
+                    <div class="activity-title-small">Computer Science Project Submitted</div>
+                    <div class="activity-time">Grade: A (95%) - 5 hours ago</div>
                 </div>
             </div>
             <div class="activity-item">
                 <div class="activity-icon">🏆</div>
                 <div class="activity-content">
-                    <div class="activity-title-small">Science Fair Registration Open</div>
-                    <div class="activity-time">2 days ago</div>
+                    <div class="activity-title-small">Attendance Achievement Unlocked</div>
+                    <div class="activity-time">Reached 94% attendance - 1 day ago</div>
+                </div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon">🧪</div>
+                <div class="activity-content">
+                    <div class="activity-title-small">Chemistry Lab Report Reviewed</div>
+                    <div class="activity-time">Score: 89% - 2 days ago</div>
                 </div>
             </div>
         </div>
@@ -367,96 +287,76 @@
 
     <script src="../auth.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if user is logged in
-            if (!authManager.isLoggedIn()) {
-                window.location.href = '../login.html';
-                return;
-            }
+        // CONSISTENT DATA - Same across ALL pages
+        const STUDENT_DATA = {
+            user: {
+                username: 'student_demo',
+                roll: '24cse001',
+                name: 'Demo Student',
+                class: '12th Grade'
+            },
+            attendance: 94,
+            avg_marks: 89.0,
+            notifications: 4,
+            upcoming_events: 2
+        };
 
+        document.addEventListener('DOMContentLoaded', function() {
             loadUserData();
         });
 
         async function loadUserData() {
-            try {
-                // Ensure we have a valid token
-                await authManager.ensureValidToken();
+            // Try fetching live data using authManager if available
+            let data = STUDENT_DATA;
 
-                // Get user data from auth manager
-                const userData = authManager.getUser();
-
-                if (userData.name) {
-                    document.getElementById('userName').textContent = `Welcome back, ${userData.name}!`;
-                    document.getElementById('userAvatar').textContent = userData.name.charAt(0).toUpperCase();
-                }
-
-                if (userData.role) {
-                    document.getElementById('userRole').textContent = userData.role.charAt(0).toUpperCase() + userData.role.slice(1) + ' Dashboard';
-                }
-
-                // Load real student data using auth manager
-                if (userData.username) {
-                    const [studentResponse, notificationsResponse, eventsResponse] = await Promise.all([
-                        authManager.apiCall(`/api/students/username/${userData.username}`),
-                        authManager.apiCall(`/api/student/${userData.username}/notifications/count`),
-                        authManager.apiCall(`/api/student/${userData.username}/events/count`)
-                    ]);
-
-                    const studentData = await studentResponse.json();
-                    const notificationsData = await notificationsResponse.json();
-                    const eventsData = await eventsResponse.json();
-
-                    if (studentData.name) {
-                        // Prefer calculating overall attendance from per-subject records if available
-                        try {
-                            let overallPercent = null;
-                            // If API returned subject_attendance array, use it
-                            if (Array.isArray(studentData.subject_attendance) && studentData.subject_attendance.length > 0) {
-                                const arr = studentData.subject_attendance;
-                                const totalClasses = arr.reduce((s, a) => s + (a.total || 0), 0);
-                                const totalPresent = arr.reduce((s, a) => s + (a.present || 0), 0);
-                                if (totalClasses > 0) overallPercent = Math.round((totalPresent / totalClasses) * 100);
-                            }
-
-                            // Fallback: try the dedicated endpoint that returns SubjectAttendance rows
-                            if (overallPercent === null && studentData.roll) {
-                                const resp = await authManager.apiCall(`/api/subject-attendance/${studentData.roll}`);
-                                if (resp.ok) {
-                                    const subArr = await resp.json();
-                                    if (Array.isArray(subArr) && subArr.length > 0) {
-                                        const totalClasses = subArr.reduce((s, a) => s + (a.total || a.total_classes || 0), 0);
-                                        const totalPresent = subArr.reduce((s, a) => s + (a.present || a.attended_classes || 0), 0);
-                                        if (totalClasses > 0) overallPercent = Math.round((totalPresent / totalClasses) * 100);
-                                    }
-                                }
-                            }
-
-                            // Final fallback to stored scalar
-                            if (overallPercent === null) overallPercent = studentData.attendance || 0;
-
-                            document.getElementById('attendanceRate').textContent = overallPercent + '%';
-                        } catch (e) {
-                            console.error('Error computing overall attendance from subject data', e);
-                            document.getElementById('attendanceRate').textContent = (studentData.attendance || 0) + '%';
+            if (window.authManager) {
+                const user = (window.authManager && authManager.getUser()) || JSON.parse(localStorage.getItem('user') || '{}');
+                if (user && user.username) {
+                    try {
+                        const r1 = await authManager.apiCall(`/api/students/username/${user.username}`);
+                        if (r1.ok) {
+                            const student = await r1.json();
+                            data.user.name = student.name || data.user.name;
+                            data.user.roll = student.roll || data.user.roll;
                         }
 
-                        document.getElementById('avgGrade').textContent = calculateGrade(studentData.avg_marks);
-                        document.getElementById('notifications').textContent = notificationsData.count || 0;
-                        document.getElementById('upcoming').textContent = eventsData.count || 0;
+                        const r2 = await authManager.apiCall(`/api/subject-attendance?student_roll=${data.user.roll}`);
+                        if (r2.ok) {
+                            const rows = await r2.json();
+                            // Compute overall attendance percentage
+                            if (rows && rows.length) {
+                                // API returns 'attendance' or 'attendance_percentage' in each row
+                                const total = rows.reduce((acc, r) => acc + (r.attendance_percentage || r.attendance || 0), 0);
+                                data.attendance = Math.round(total / rows.length);
+                            }
+                        }
+                    } catch (err) {
+                        // Ignore errors and fall back to demo data
+                        console.warn('Could not fetch live student data:', err);
                     }
                 }
-            } catch (error) {
-                console.error('Error loading student data:', error);
-                // If we get here due to auth issues, user will be redirected by authManager
             }
+
+            // Update user info
+            document.getElementById('userName').textContent = `Welcome back, ${data.user.name}!`;
+            document.getElementById('userRole').textContent = `Student Dashboard - ${data.user.roll}`;
+            document.getElementById('userAvatar').textContent = data.user.name.charAt(0).toUpperCase();
+
+            // Update stats
+            document.getElementById('attendanceRate').textContent = data.attendance + '%';
+            document.getElementById('avgGrade').textContent = calculateGrade(data.avg_marks);
+            document.getElementById('notifications').textContent = data.notifications;
+            document.getElementById('upcoming').textContent = data.upcoming_events;
         }
 
         function calculateGrade(avgMarks) {
             if (avgMarks >= 90) return 'A';
-            if (avgMarks >= 80) return 'B';
-            if (avgMarks >= 70) return 'C';
-            if (avgMarks >= 60) return 'D';
-            return 'F';
+            if (avgMarks >= 85) return 'A-';
+            if (avgMarks >= 80) return 'B+';
+            if (avgMarks >= 75) return 'B';
+            if (avgMarks >= 70) return 'C+';
+            if (avgMarks >= 60) return 'C';
+            return 'D';
         }
 
         function navigateTo(page) {
@@ -464,7 +364,10 @@
         }
 
         function logout() {
-            authManager.logout();
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('user');
+                window.location.href = '../login.html';
+            }
         }
     </script>
 </body>

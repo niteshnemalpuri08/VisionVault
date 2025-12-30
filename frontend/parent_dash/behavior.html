@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Behavior & Conduct - Parent Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8f9fa;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 32px;
+            top: 32px;
+            background: white;
+            color: #667eea;
+            border: 1px solid #e5e7eb;
+            padding: 10px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #f9fafb;
+            border-color: #667eea;
+        }
+
+        .header h1 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 24px 20px;
+            background: #f9fafb;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 320px;
+            margin-top: 20px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            background: #f3f4f6;
+            color: #4b5563;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .filter-tab:hover {
+            background: #e5e7eb;
+        }
+
+        .filter-tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .record-item {
+            background: #f9fafb;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 4px solid;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .record-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .record-positive {
+            border-left-color: #10b981;
+        }
+
+        .record-neutral {
+            border-left-color: #3b82f6;
+        }
+
+        .record-negative {
+            border-left-color: #ef4444;
+        }
+
+        .record-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #1a1a1a;
+            font-size: 16px;
+        }
+
+        .record-date {
+            color: #9ca3af;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .record-description {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .record-meta {
+            display: flex;
+            gap: 15px;
+            color: #6b7280;
+            font-size: 14px;
+            align-items: center;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge-positive {
+            background: #d1fae5;
+            color: #10b981;
+        }
+
+        .badge-neutral {
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+
+        .badge-negative {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .back-btn {
+                position: static;
+                margin-bottom: 16px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+            <h1>⭐ Behavior & Conduct</h1>
+            <p>Monitor your child's behavioral performance</p>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-title">Overall Behavior Summary</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value" id="totalPoints">85</span>
+                    <span class="stat-label">Total Points</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="positiveCount">12</span>
+                    <span class="stat-label">Positive</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="neutralCount">5</span>
+                    <span class="stat-label">Neutral</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="negativeCount">1</span>
+                    <span class="stat-label">Concerns</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-title">Behavior Trend Over Time</div>
+            <div class="chart-container">
+                <canvas id="behaviorTrendChart"></canvas>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-title">Behavior Categories</div>
+            <div class="chart-container">
+                <canvas id="behaviorCategoryChart"></canvas>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-title">Behavior Records</div>
+            
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterRecords('all')">All</button>
+                <button class="filter-tab" onclick="filterRecords('positive')">Positive</button>
+                <button class="filter-tab" onclick="filterRecords('neutral')">Neutral</button>
+                <button class="filter-tab" onclick="filterRecords('negative')">Concerns</button>
+            </div>
+
+            <div id="recordsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        let allRecords = [];
+        let charts = {};
+
+        const recordsData = [
+            {
+                type: 'positive',
+                title: 'Excellent Class Participation',
+                date: '2024-12-27',
+                description: 'Demonstrated exceptional understanding and engaged actively in class discussions.',
+                points: 5,
+                teacher: 'Mr. Smith'
+            },
+            {
+                type: 'positive',
+                title: 'Outstanding Assignment Quality',
+                date: '2024-12-26',
+                description: 'Submitted exemplary work with great attention to detail.',
+                points: 5,
+                teacher: 'Ms. Johnson'
+            },
+            {
+                type: 'positive',
+                title: 'Peer Helping Behavior',
+                date: '2024-12-25',
+                description: 'Helped classmate understand difficult concepts without being asked.',
+                points: 3,
+                teacher: 'Mr. Brown'
+            },
+            {
+                type: 'neutral',
+                title: 'Late Submission',
+                date: '2024-12-23',
+                description: 'Assignment submitted 1 day late but with acceptable quality.',
+                points: 0,
+                teacher: 'Ms. Davis'
+            },
+            {
+                type: 'negative',
+                title: 'Classroom Disruption',
+                date: '2024-12-20',
+                description: 'Talked during instruction time. Reminder given.',
+                points: -2,
+                teacher: 'Mr. Smith'
+            },
+            {
+                type: 'positive',
+                title: 'Sports Achievement',
+                date: '2024-12-18',
+                description: 'Excellent performance in school sports tournament.',
+                points: 4,
+                teacher: 'PE Coach'
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            allRecords = recordsData;
+            renderBehaviorData();
+        });
+
+        function renderBehaviorData() {
+            document.getElementById('totalPoints').textContent = allRecords.reduce((sum, r) => sum + r.points, 0);
+            document.getElementById('positiveCount').textContent = allRecords.filter(r => r.type === 'positive').length;
+            document.getElementById('neutralCount').textContent = allRecords.filter(r => r.type === 'neutral').length;
+            document.getElementById('negativeCount').textContent = allRecords.filter(r => r.type === 'negative').length;
+
+            renderCharts();
+            renderRecords(allRecords);
+        }
+
+        function renderCharts() {
+            const trendCtx = document.getElementById('behaviorTrendChart').getContext('2d');
+            charts.trend = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+                    datasets: [{
+                        label: 'Behavior Points',
+                        data: [15, 18, 20, 22, 24, 25],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#10b981',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#9ca3af',
+                                font: { size: 12, family: 'Inter' }
+                            },
+                            grid: {
+                                color: '#f3f4f6'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#6b7280',
+                                font: { size: 12, family: 'Inter' }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            const categoryCtx = document.getElementById('behaviorCategoryChart').getContext('2d');
+            charts.category = new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Positive', 'Neutral', 'Concerns'],
+                    datasets: [{
+                        data: [12, 5, 1],
+                        backgroundColor: [
+                            '#10b981',
+                            '#3b82f6',
+                            '#ef4444'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#6b7280',
+                                font: { size: 13, family: 'Inter' },
+                                padding: 15
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderRecords(records) {
+            const container = document.getElementById('recordsContainer');
+            container.innerHTML = '';
+
+            records.forEach(record => {
+                const recordDiv = document.createElement('div');
+                recordDiv.className = `record-item record-${record.type}`;
+                const badgeClass = `badge badge-${record.type}`;
+                const typeLabel = record.type.charAt(0).toUpperCase() + record.type.slice(1);
+
+                recordDiv.innerHTML = `
+                    <div class="record-title">${record.title}</div>
+                    <div class="record-date">${record.date}</div>
+                    <div class="record-description">${record.description}</div>
+                    <div class="record-meta">
+                        <span>👨‍🏫 ${record.teacher}</span>
+                        <span class="${badgeClass}">${typeLabel} (${record.points > 0 ? '+' : ''}${record.points} pts)</span>
+                    </div>
+                `;
+                container.appendChild(recordDiv);
+            });
+        }
+
+        function filterRecords(type) {
+            document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const filtered = type === 'all' ? allRecords : allRecords.filter(r => r.type === type);
+            renderRecords(filtered);
+        }
+
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

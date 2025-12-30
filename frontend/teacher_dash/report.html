@@ -280,6 +280,7 @@
         </div>
     </div>
 
+    <script src="../auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             loadUserData();
@@ -288,9 +289,9 @@
         });
 
         function loadUserData() {
-            const userData = JSON.parse(localStorage.getItem('user') || '{}');
+            const userData = (window.authManager && authManager.getUser()) || JSON.parse(localStorage.getItem('user') || '{}');
 
-            if (userData.name) {
+            if (userData && userData.name) {
                 document.getElementById('userName').textContent = `Welcome back, ${userData.name}!`;
                 document.getElementById('userAvatar').textContent = userData.name.charAt(0).toUpperCase();
             }
@@ -298,8 +299,8 @@
 
         async function loadSectionData() {
             try {
-                const userData = JSON.parse(localStorage.getItem('user') || '{}');
-                const teacherUsername = userData.username;
+                const userData = (window.authManager && authManager.getUser()) || JSON.parse(localStorage.getItem('user') || '{}');
+                const teacherUsername = userData && userData.username;
 
                 if (!teacherUsername) {
                     alert('Please login first');
@@ -311,7 +312,7 @@
                 const teacherSection = getTeacherSection(teacherUsername);
                 document.getElementById('sectionBadge').textContent = `Section ${teacherSection}`;
 
-                const response = await fetch('/api/students');
+                const response = await authManager.apiCall('/api/students');
                 const allStudents = await response.json();
 
                 // Filter students for this teacher's section

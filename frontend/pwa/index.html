@@ -31,6 +31,7 @@
     </div>
   </div>
 
+  <script src="../auth.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // Register service worker
@@ -38,7 +39,7 @@
         navigator.serviceWorker.register('/service-worker.js').catch(()=>{});
       }
 
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const user = (window.authManager && authManager.getUser()) || JSON.parse(localStorage.getItem('user') || '{}');
       if (!user || !user.username || !user.token || user.role !== 'parent') return;
 
       document.getElementById('loginArea').style.display = 'none';
@@ -46,8 +47,7 @@
       document.getElementById('assignments').style.display = 'block';
       document.getElementById('welcome').textContent = `Welcome, ${user.name || user.username}`;
 
-      fetch(`/api/parent/${user.username}/dashboard`, { headers: { 'Authorization': `Bearer ${user.token}` }})
-        .then(r => r.json()).then(data => {
+      authManager.apiCall(`/api/parent/${user.username}/dashboard`).then(r => r.json()).then(data => {
           if (data.student) {
             document.getElementById('attendance').textContent = data.student.attendance + '%';
             const list = document.getElementById('assignList');
@@ -70,7 +70,8 @@
               }
             } catch (e) {
               console.warn('SSE not available', e);
-            }          }
+            }
+          }
         }).catch(err => {
           console.warn('Dashboard fetch failed', err);
         });

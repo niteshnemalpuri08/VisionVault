@@ -13,6 +13,7 @@ class Student(db.Model):
     roll = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(100), nullable=False)
     class_name = db.Column(db.String(50), nullable=False)  # Keep for backward compatibility
+    section = db.Column(db.String(10), default='A')
     attendance = db.Column(db.Float, default=0.0)
     avg_marks = db.Column(db.Float, default=0.0)
 
@@ -55,7 +56,7 @@ class Teacher(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False)
     department = db.Column(db.String(50), nullable=False)  # Keep for backward compatibility
@@ -66,13 +67,15 @@ class Teacher(db.Model):
     sections = db.relationship('TeacherSection', backref='teacher', lazy=True)
     subjects = db.relationship('TeacherSubject', backref='teacher', lazy=True)
 
+    def set_password(self, password):
+        self.password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
     def check_password(self, password):
-        return self.password == password
+        return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
 
     def to_dict(self):
         return {
             'username': self.username,
-            'password': self.password,
             'name': self.name,
             'email': self.email,
             'department': self.department,
@@ -307,6 +310,36 @@ class SubjectAttendance(db.Model):
             self.attendance_percentage = (self.attended_classes / self.total_classes) * 100
         else:
             self.attendance_percentage = 0.0
+
+class Notification(db.Model):
+    __tablename__ = 'notifications'
+
+    id = db.Column(db.Integer, primary_key=True)
+    student_roll = db.Column(db.String(20), db.ForeignKey('students.roll'), nullable=True)  # Null for general notifications
+    teacher_username = db.Column(db.String(50), db.ForeignKey('teachers.username'), nullable=True)  # For teacher notifications
+    parent_username = db.Column(db.String(50), db.ForeignKey('parents.username'), nullable=True)  # For parent notifications
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    type = db.Column(db.String(50), nullable=False)  # academic, assignment, achievement, behavior, general
+    priority = db.Column(db.String(20), default='medium')  # low, medium, high
+    read = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    icon = db.Column(db.String(10), default='📢')  # Emoji icon
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'student_roll': self.student_roll,
+            'teacher_username': self.teacher_username,
+            'parent_username': self.parent_username,
+            'title': self.title,
+            'content': self.content,
+            'type': self.type,
+            'priority': self.priority,
+            'read': self.read,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'icon': self.icon
+        }
 
 class WebhookEvent(db.Model):
     __tablename__ = 'webhook_events'

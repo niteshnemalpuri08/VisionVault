@@ -33,3 +33,20 @@
 - [x] Update .gitignore if needed ✅ COMPLETED
 - [x] Ensure clean directory structure ✅ COMPLETED
 - [x] Test full application flow ✅ COMPLETED
+
+### 6. CI & Frontend Consistency
+- [x] Add GitHub Actions smoke test workflow ✅ COMPLETED
+- [x] Add `TESTING.md` with instructions for running tests ✅ COMPLETED
+- [x] Convert remaining frontend pages to use `authManager.apiCall` and `authManager.getUser()` ✅ COMPLETED
+
+### 7. Frontend stability fixes
+- [x] Ensure `auth.js` is included on all pages that use `authManager` ✅ COMPLETED
+- [x] Guard direct `authManager` usage and add fallbacks where necessary ✅ COMPLETED
+
+### 8. Notification System Implementation
+- [x] Add Notification model to backend/models.py ✅ COMPLETED
+- [x] Update database schema with notifications table ✅ COMPLETED
+- [x] Implement notification API endpoints (GET, PATCH, POST) ✅ COMPLETED
+- [x] Update frontend notification.html to use real API data ✅ COMPLETED
+- [x] Add sample notifications for testing ✅ COMPLETED
+- [x] Clean up sample notification script after use ✅ COMPLETED

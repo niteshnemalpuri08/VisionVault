@@ -2,42 +2,47 @@
   {
     "username": "t01",
     "password": "t01",
-    "name": "Teacher 01",
+    "name": "T01",
     "email": "t01@example.com",
-    "department": "CSE"
+    "department": "CSE",
+    "subject": "math"
   },
   {
     "username": "t02",
     "password": "t02",
-    "name": "Teacher 02",
+    "name": "T02",
     "email": "t02@example.com",
-    "department": "CSE"
+    "department": "CSE",
+    "subject": "physics"
   },
   {
     "username": "t03",
     "password": "t03",
-    "name": "Teacher 03",
+    "name": "T03",
     "email": "t03@example.com",
-    "department": "CSE"
+    "department": "CSE",
+    "subject": "chemistry"
   },
   {
     "username": "t04",
     "password": "t04",
-    "name": "Teacher 04",
+    "name": "T04",
     "email": "t04@example.com",
-    "department": "CSE"
+    "department": "CSE",
+    "subject": "cs"
   },
   {
     "username": "t05",
     "password": "t05",
-    "name": "Teacher 05",
+    "name": "T05",
     "email": "t05@example.com",
-    "department": "CSE"
+    "department": "CSE",
+    "subject": "english"
   },
   {
     "username": "t06",
     "password": "t06",
-    "name": "Teacher 06",
+    "name": "T06",
     "email": "t06@example.com",
     "department": "CSE"
   },
@@ -72,35 +77,35 @@
   {
     "username": "t11",
     "password": "t11",
-    "name": "Teacher 11",
+    "name": "T11",
     "email": "t11@example.com",
     "department": "CSE"
   },
   {
     "username": "t12",
     "password": "t12",
-    "name": "Teacher 12",
+    "name": "T12",
     "email": "t12@example.com",
     "department": "CSE"
   },
   {
     "username": "t13",
     "password": "t13",
-    "name": "Teacher 13",
+    "name": "T13",
     "email": "t13@example.com",
     "department": "CSE"
   },
   {
     "username": "t14",
     "password": "t14",
-    "name": "Teacher 14",
+    "name": "T14",
     "email": "t14@example.com",
     "department": "CSE"
   },
   {
     "username": "t15",
     "password": "t15",
-    "name": "Teacher 15",
+    "name": "T15",
     "email": "t15@example.com",
     "department": "CSE"
   },
@@ -142,35 +147,35 @@
   {
     "username": "t21",
     "password": "t21",
-    "name": "Teacher 21",
+    "name": "T21",
     "email": "t21@example.com",
     "department": "CSE"
   },
   {
     "username": "t22",
     "password": "t22",
-    "name": "Teacher 22",
+    "name": "T22",
     "email": "t22@example.com",
     "department": "CSE"
   },
   {
     "username": "t23",
     "password": "t23",
-    "name": "Teacher 23",
+    "name": "T23",
     "email": "t23@example.com",
     "department": "CSE"
   },
   {
     "username": "t24",
     "password": "t24",
-    "name": "Teacher 24",
+    "name": "T24",
     "email": "t24@example.com",
     "department": "CSE"
   },
   {
     "username": "t25",
     "password": "t25",
-    "name": "Teacher 25",
+    "name": "T25",
     "email": "t25@example.com",
     "department": "CSE"
   },

@@ -153,6 +153,9 @@
             token: data.token
           }));
 
+          // Also store token separately for pages that read `localStorage.getItem('token')`
+          localStorage.setItem('token', data.token);
+
           // Redirect based on role
           if (data.role === 'student') {
             window.location.href = 'student_dash/index.html';
@@ -173,5 +176,6 @@
 
 
   </script>
+  <script src="auth.js"></script>
 </body>
 </html>

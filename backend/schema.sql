@@ -53,6 +53,24 @@ CREATE TABLE IF NOT EXISTS attendance (
     UNIQUE(student_roll, subject)
 );
 
+-- Notifications table
+CREATE TABLE IF NOT EXISTS notifications (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_roll TEXT,
+    teacher_username TEXT,
+    parent_username TEXT,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    type TEXT NOT NULL,
+    priority TEXT DEFAULT 'medium',
+    read BOOLEAN DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    icon TEXT DEFAULT '📢',
+    FOREIGN KEY (student_roll) REFERENCES students(roll),
+    FOREIGN KEY (teacher_username) REFERENCES teachers(username),
+    FOREIGN KEY (parent_username) REFERENCES parents(username)
+);
+
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_students_roll ON students(roll);
 CREATE INDEX IF NOT EXISTS idx_students_username ON students(username);
@@ -60,3 +78,7 @@ CREATE INDEX IF NOT EXISTS idx_teachers_username ON teachers(username);
 CREATE INDEX IF NOT EXISTS idx_parents_username ON parents(username);
 CREATE INDEX IF NOT EXISTS idx_parents_student_roll ON parents(student_roll);
 CREATE INDEX IF NOT EXISTS idx_attendance_student_roll ON attendance(student_roll);
+CREATE INDEX IF NOT EXISTS idx_notifications_student_roll ON notifications(student_roll);
+CREATE INDEX IF NOT EXISTS idx_notifications_teacher_username ON notifications(teacher_username);
+CREATE INDEX IF NOT EXISTS idx_notifications_parent_username ON notifications(parent_username);
+CREATE INDEX IF NOT EXISTS idx_notifications_created_at ON notifications(created_at);

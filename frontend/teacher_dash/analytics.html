@@ -398,6 +398,7 @@
         </div>
     </div>
 
+    <script src="../auth.js"></script>
     <script>
         let currentFilters = {
             department: 'all',
@@ -413,9 +414,9 @@
         });
 
         async function loadUserData() {
-            const userData = JSON.parse(localStorage.getItem('user') || '{}');
+            const userData = (window.authManager && authManager.getUser()) || JSON.parse(localStorage.getItem('user') || '{}');
 
-            if (userData.name) {
+            if (userData && userData.name) {
                 document.getElementById('userName').textContent = `${userData.name} - Analytics Dashboard`;
                 document.getElementById('userAvatar').textContent = userData.name.charAt(0).toUpperCase();
             }
@@ -424,7 +425,7 @@
         async function loadFilters() {
             try {
                 // Load departments
-                const deptResponse = await fetch('/api/departments');
+                const deptResponse = await authManager.apiCall('/api/departments');
                 const departments = await deptResponse.json();
 
                 const deptFilter = document.getElementById('departmentFilter');
@@ -436,7 +437,7 @@
                 });
 
                 // Load sections
-                const sectionResponse = await fetch('/api/sections');
+                const sectionResponse = await authManager.apiCall('/api/sections');
                 const sections = await sectionResponse.json();
 
                 const sectionFilter = document.getElementById('sectionFilter');
@@ -453,31 +454,18 @@
 
         async function loadAnalyticsData() {
             try {
-                const userData = JSON.parse(localStorage.getItem('user') || '{}');
-                const token = localStorage.getItem('token');
+                const userData = (window.authManager && authManager.getUser()) || JSON.parse(localStorage.getItem('user') || '{}');
 
                 // Load attendance heatmap data
-                const heatmapResponse = await fetch(`/api/analytics/attendance-heatmap?teacher=${userData.username}&timeframe=${currentFilters.timeRange}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
+                const heatmapResponse = await authManager.apiCall(`/api/analytics/attendance-heatmap?teacher=${userData.username}&timeframe=${currentFilters.timeRange}`);
                 const heatmapData = await heatmapResponse.json();
 
                 // Load performance trends data
-                const trendsResponse = await fetch(`/api/analytics/performance-trends?teacher=${userData.username}&timeframe=${currentFilters.timeRange}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
+                const trendsResponse = await authManager.apiCall(`/api/analytics/performance-trends?teacher=${userData.username}&timeframe=${currentFilters.timeRange}`);
                 const trendsData = await trendsResponse.json();
 
                 // Load insights data
-                const insightsResponse = await fetch(`/api/analytics/insights?teacher=${userData.username}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
+                const insightsResponse = await authManager.apiCall(`/api/analytics/insights?teacher=${userData.username}`);
                 const insightsData = await insightsResponse.json();
 
                 // Render all analytics components

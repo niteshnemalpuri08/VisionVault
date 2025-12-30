@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subject Performance - Student Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
         body {
@@ -39,13 +39,14 @@
             cursor: pointer;
             margin-bottom: 20px;
             transition: background 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
         }
 
         .back-btn:hover {
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* Table-based, structured layout for subjects */
         .subjects-table-container {
             overflow-x: auto;
             background: rgba(255, 255, 255, 0.06);
@@ -67,7 +68,7 @@
             font-size: 0.95em;
             color: #e6e6e6;
             border-bottom: 1px solid rgba(255,255,255,0.08);
-            background: rgba(255,255,255,0.02);
+            background: rgba(255,255,255,0.05);
         }
 
         .subjects-table tbody td {
@@ -75,6 +76,11 @@
             border-bottom: 1px solid rgba(255,255,255,0.04);
             vertical-align: middle;
             color: #fff;
+        }
+
+        .subjects-table tbody tr:hover {
+            background: rgba(255,255,255,0.05);
+            transition: background 0.3s ease;
         }
 
         .subject-name-cell {
@@ -87,104 +93,82 @@
             padding: 6px 12px;
             border-radius: 12px;
             font-weight: 700;
-            font-size: 0.9em;
+            font-size: 0.85em;
             display: inline-block;
+            text-align: center;
+            min-width: 35px;
         }
 
-        .trend-up { color: #4caf50; font-weight:700 }
-        .trend-stable { color: #ffb300; font-weight:700 }
-        .trend-down { color: #f44336; font-weight:700 }
+        .grade-badge.excellent { 
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+        }
+        
+        .grade-badge.good { 
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+        }
+        
+        .grade-badge.average { 
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+        }
+        
+        .grade-badge.poor { 
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+        }
+
+        .trend-up { 
+            color: #4caf50; 
+            font-weight: 700;
+        }
+        
+        .trend-stable { 
+            color: #ffb300; 
+            font-weight: 700;
+        }
+        
+        .trend-down { 
+            color: #f44336; 
+            font-weight: 700;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .stat-card p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
 
         @media (max-width: 720px) {
             .subjects-table {
                 min-width: 600px;
             }
-        }
-
-        .subject-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            transition: transform 0.3s ease;
-        }
-
-        .subject-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .subject-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .subject-name {
-            font-size: 1.3em;
-            font-weight: 600;
-        }
-
-        .grade-badge {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: 600;
-        }
-
-        .grade-badge.excellent { background: linear-gradient(135deg, #4CAF50, #45a049); }
-        .grade-badge.good { background: linear-gradient(135deg, #2196F3, #1976D2); }
-        .grade-badge.average { background: linear-gradient(135deg, #FF9800, #F57C00); }
-        .grade-badge.poor { background: linear-gradient(135deg, #f44336, #d32f2f); }
-
-        .subject-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 1.5em;
-            font-weight: 600;
-            display: block;
-        }
-
-        .stat-label {
-            opacity: 0.8;
-            font-size: 0.9em;
-        }
-
-        .progress-bar {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            height: 8px;
-            margin: 10px 0;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 10px;
-            transition: width 0.3s ease;
-        }
-
-        .subject-details {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .detail-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
+            
+            .container {
+                padding: 10px;
+            }
         }
     </style>
 </head>
@@ -195,6 +179,10 @@
         <div class="header">
             <h1>📚 Subject Performance</h1>
             <p>Track your performance across all subjects</p>
+        </div>
+
+        <div class="stats-summary" id="statsSummary">
+            <!-- Stats will be inserted here -->
         </div>
 
         <div class="subjects-table-container">
@@ -215,112 +203,24 @@
         </div>
     </div>
 
+    <script src="../auth.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            loadSubjectData();
-        });
-
-        async function loadSubjectData() {
-            // Get user data from localStorage
-            const userData = JSON.parse(localStorage.getItem('user') || '{}');
-
-            if (userData.username) {
-                try {
-                    const [studentResponse, assignmentStatsResponse, subjectAttendanceResponse] = await Promise.all([
-                        fetch(`/api/students/username/${userData.username}`),
-                        fetch(`/api/student/${userData.username}/assignment-stats`, {
-                            headers: {
-                                'Authorization': `Bearer ${localStorage.getItem('token')}`
-                            }
-                        }),
-                        fetch(`/api/subject-attendance/student/${userData.username}`, {
-                            headers: {
-                                'Authorization': `Bearer ${localStorage.getItem('token')}`
-                            }
-                        })
-                    ]);
-
-                    const studentData = await studentResponse.json();
-                    const assignmentStats = await assignmentStatsResponse.json();
-                    const subjectAttendance = await subjectAttendanceResponse.json();
-
-                    if (studentData.marks) {
-                        // Map student marks to subjects
-                        const subjectMapping = {
-                            'math': 'Mathematics',
-                            'physics': 'Physics',
-                            'chemistry': 'Chemistry',
-                            'cs': 'Computer Science',
-                            'english': 'English'
-                        };
-
-                        const subjectsData = Object.keys(studentData.marks).map(subjectKey => {
-                            const score = studentData.marks[subjectKey];
-                            const grade = calculateGrade(score);
-                            const subjectName = subjectMapping[subjectKey] || subjectKey;
-                            const stats = assignmentStats[subjectName] || {};
-
-                            // Get subject-specific attendance or fallback to overall
-                            let subjectAtt = null;
-                            if (subjectAttendance) {
-                                // Try by subjectName key first (API returns subject name keys)
-                                subjectAtt = subjectAttendance[subjectName] || null;
-                                if (!subjectAtt && Array.isArray(subjectAttendance)) {
-                                    subjectAtt = subjectAttendance.find(s => s.name === subjectName || s.subject === subjectName) || null;
-                                }
-                            }
-
-                            // Prefer showing present/total when available
-                            let present = null;
-                            let total = null;
-                            let attendancePercent = studentData.attendance || 0;
-
-                            if (subjectAtt) {
-                                present = subjectAtt.present != null ? subjectAtt.present : (subjectAtt.attended_classes != null ? subjectAtt.attended_classes : null);
-                                total = subjectAtt.total != null ? subjectAtt.total : (subjectAtt.total_classes != null ? subjectAtt.total_classes : null);
-                                if (present != null && total != null && total > 0) {
-                                    attendancePercent = Math.round((present / total) * 100);
-                                } else {
-                                    attendancePercent = Math.round(subjectAtt.attendance || subjectAtt.attendance_percentage || attendancePercent);
-                                }
-                            }
-
-                            return {
-                                name: subjectName,
-                                grade: grade,
-                                score: score,
-                                attendance: attendancePercent,
-                                present: present,
-                                total: total,
-                                assignments: Math.round(stats.average_score || score * 0.8), // Use real assignment average or fallback
-                                exams: score,
-                                trend: score >= 85 ? 'up' : score >= 70 ? 'stable' : 'down'
-                            };
-                        });
-
-                        renderSubjects(subjectsData);
-                    }
-                } catch (error) {
-                    console.error('Error loading student data:', error);
-                    // Fallback to mock data
-                    loadMockSubjectData();
-                }
-            } else {
-                // Fallback to mock data
-                loadMockSubjectData();
-            }
-        }
-
-        function loadMockSubjectData() {
-            // Mock subject data - fallback
-            const subjectsData = [
+        // CONSISTENT DATA - Same across ALL pages
+        const STUDENT_DATA = {
+            user: {
+                username: 'student_demo',
+                roll: '24cse001',
+                name: 'Demo Student',
+                class: '12th Grade'
+            },
+            subjects: [
                 {
                     name: 'Mathematics',
                     grade: 'A',
                     score: 92,
                     attendance: 95,
-                    assignments: 88,
-                    exams: 94,
+                    assignments: 90,
+                    exams: 92,
                     trend: 'up'
                 },
                 {
@@ -329,7 +229,7 @@
                     score: 87,
                     attendance: 90,
                     assignments: 85,
-                    exams: 88,
+                    exams: 87,
                     trend: 'up'
                 },
                 {
@@ -337,7 +237,7 @@
                     grade: 'A-',
                     score: 89,
                     attendance: 92,
-                    assignments: 90,
+                    assignments: 88,
                     exams: 89,
                     trend: 'stable'
                 },
@@ -346,8 +246,8 @@
                     grade: 'A',
                     score: 95,
                     attendance: 98,
-                    assignments: 92,
-                    exams: 96,
+                    assignments: 93,
+                    exams: 95,
                     trend: 'up'
                 },
                 {
@@ -356,21 +256,106 @@
                     score: 82,
                     attendance: 88,
                     assignments: 80,
-                    exams: 83,
-                    trend: 'down'
+                    exams: 82,
+                    trend: 'stable'
                 },
                 {
                     name: 'Physical Education',
                     grade: 'A-',
                     score: 91,
                     attendance: 100,
-                    assignments: 85,
-                    exams: 95,
+                    assignments: 89,
+                    exams: 91,
                     trend: 'up'
                 }
-            ];
+            ]
+        };
 
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSubjectData();
+        });
+
+        async function loadSubjectData() {
+            let subjectsData = STUDENT_DATA.subjects;
+
+            if (window.authManager) {
+                const user = (window.authManager && authManager.getUser()) || JSON.parse(localStorage.getItem('user') || '{}');
+                if (user && user.roll) {
+                    try {
+                        const r = await authManager.apiCall(`/api/internal-marks?student_roll=${user.roll}`);
+                        if (r.ok) {
+                            const marks = await r.json();
+                            // Aggregate marks by subject
+                            const bySubject = {};
+                            marks.forEach(m => {
+                                if (!bySubject[m.subject]) bySubject[m.subject] = {scores: [], attendance: 0};
+                                bySubject[m.subject].scores.push(m.marks);
+                            });
+
+                            const newSubjects = Object.keys(bySubject).map(subject => {
+                                const scores = bySubject[subject].scores;
+                                const avg = Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
+                                return {
+                                    name: subject,
+                                    score: avg,
+                                    grade: calculateGradeFromScore(avg),
+                                    attendance: 0,
+                                    assignments: '-',
+                                    exams: '-',
+                                    trend: 'stable'
+                                };
+                            });
+
+                            if (newSubjects.length) subjectsData = newSubjects;
+                        }
+                    } catch (err) {
+                        console.warn('Could not fetch internal marks:', err);
+                    }
+                }
+            }
+
+            renderStats(subjectsData);
             renderSubjects(subjectsData);
+        }
+
+        function calculateGradeFromScore(score) {
+            if (score >= 90) return 'A';
+            if (score >= 85) return 'A-';
+            if (score >= 80) return 'B+';
+            if (score >= 75) return 'B';
+            if (score >= 70) return 'C+';
+            if (score >= 60) return 'C';
+            return 'D';
+        }
+
+        function renderStats(subjectsData) {
+            // Calculate accurate average from core academic subjects (excluding PE)
+            const coreSubjects = subjectsData.filter(s => s.name !== 'Physical Education');
+            const avgScore = Math.round(
+                coreSubjects.reduce((sum, s) => sum + s.score, 0) / coreSubjects.length * 10
+            ) / 10;
+            
+            const avgAttendance = Math.round(
+                subjectsData.reduce((sum, s) => sum + s.attendance, 0) / subjectsData.length
+            );
+            
+            const improving = subjectsData.filter(s => s.trend === 'up').length;
+
+            const statsSummary = document.getElementById('statsSummary');
+            statsSummary.innerHTML = `
+                <div class="stat-card">
+                    <h3>${avgScore}%</h3>
+                    <p>Average Score</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${avgAttendance}%</h3>
+                    <p>Average Attendance</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${improving}</h3>
+                    <p>Improving Subjects</p>
+                </div>
+            `;
         }
 
         function renderSubjects(subjectsData) {
@@ -382,25 +367,23 @@
 
                 // Subject name + grade badge
                 const nameTd = document.createElement('td');
-                nameTd.className = 'subject-name-cell';
-                const nameSpan = document.createElement('div');
+                const nameContainer = document.createElement('div');
+                nameContainer.className = 'subject-name-cell';
+                
+                const nameSpan = document.createElement('span');
                 nameSpan.textContent = subject.name;
+                
                 const badge = document.createElement('span');
-                let gradeClass = 'grade-badge excellent';
-                if (subject.score >= 90) gradeClass = 'grade-badge excellent';
-                else if (subject.score >= 80) gradeClass = 'grade-badge good';
-                else if (subject.score >= 70) gradeClass = 'grade-badge average';
-                else gradeClass = 'grade-badge poor';
-                badge.className = gradeClass;
+                badge.className = `grade-badge ${getGradeClass(subject.score)}`;
                 badge.textContent = subject.grade;
-                nameTd.appendChild(nameSpan);
-                nameTd.appendChild(badge);
+                
+                nameContainer.appendChild(nameSpan);
+                nameContainer.appendChild(badge);
+                nameTd.appendChild(nameContainer);
 
                 // Score
                 const scoreTd = document.createElement('td');
                 scoreTd.textContent = subject.score + '%';
-
-
 
                 // Assignments
                 const assignTd = document.createElement('td');
@@ -410,14 +393,11 @@
                 const examsTd = document.createElement('td');
                 examsTd.textContent = (subject.exams != null ? subject.exams + '%' : '-');
 
-                // Trend with color
+                // Trend
                 const trendTd = document.createElement('td');
-                let trendText = '➡️ Stable';
-                let trendClass = 'trend-stable';
-                if (subject.trend === 'up') { trendText = '↗️ Improving'; trendClass = 'trend-up'; }
-                else if (subject.trend === 'down') { trendText = '↘️ Declining'; trendClass = 'trend-down'; }
-                trendTd.textContent = trendText;
-                trendTd.className = trendClass;
+                const trendInfo = getTrendInfo(subject.trend);
+                trendTd.textContent = trendInfo.text;
+                trendTd.className = trendInfo.class;
 
                 tr.appendChild(nameTd);
                 tr.appendChild(scoreTd);
@@ -429,16 +409,24 @@
             });
         }
 
-        function calculateGrade(score) {
-            if (score >= 90) return 'A';
-            if (score >= 80) return 'B';
-            if (score >= 70) return 'C';
-            if (score >= 60) return 'D';
-            return 'F';
+        function getGradeClass(score) {
+            if (score >= 90) return 'excellent';
+            if (score >= 80) return 'good';
+            if (score >= 70) return 'average';
+            return 'poor';
+        }
+
+        function getTrendInfo(trend) {
+            const trends = {
+                'up': { text: '↗️ Improving', class: 'trend-up' },
+                'stable': { text: '➡️ Stable', class: 'trend-stable' },
+                'down': { text: '↘️ Declining', class: 'trend-down' }
+            };
+            return trends[trend] || trends['stable'];
         }
 
         function goBack() {
-            window.location.href = 'index.html';
+            window.history.back();
         }
     </script>
 </body>

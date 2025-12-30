@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignments - Parent Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8f9fa;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 32px;
+            top: 32px;
+            background: white;
+            color: #667eea;
+            border: 1px solid #e5e7eb;
+            padding: 10px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #f9fafb;
+            border-color: #667eea;
+        }
+
+        .header h1 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 24px 20px;
+            background: #f9fafb;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            background: #f3f4f6;
+            color: #4b5563;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .filter-tab:hover {
+            background: #e5e7eb;
+        }
+
+        .filter-tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .assignments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .assignment-card {
+            background: #f9fafb;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .assignment-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .assignment-pending {
+            border-left-color: #f59e0b;
+        }
+
+        .assignment-submitted {
+            border-left-color: #3b82f6;
+        }
+
+        .assignment-graded {
+            border-left-color: #10b981;
+        }
+
+        .assignment-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #1a1a1a;
+        }
+
+        .assignment-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .assignment-description {
+            color: #6b7280;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            background: #e5e7eb;
+            border-radius: 10px;
+            height: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #f59e0b;
+        }
+
+        .status-submitted {
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+
+        .status-graded {
+            background: #d1fae5;
+            color: #10b981;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .back-btn {
+                position: static;
+                margin-bottom: 16px;
+                width: 100%;
+            }
+
+            .assignments-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+            <h1>📝 Assignments & Submissions</h1>
+            <p>Track assignments and their submission status</p>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-title">Assignment Summary</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value" id="totalAssignments">15</span>
+                    <span class="stat-label">Total</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="completedCount">13</span>
+                    <span class="stat-label">Completed</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="pendingCount">2</span>
+                    <span class="stat-label">Pending</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="avgScore">88%</span>
+                    <span class="stat-label">Avg Score</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-title">All Assignments</div>
+            
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterAssignments('all')">All</button>
+                <button class="filter-tab" onclick="filterAssignments('pending')">Pending</button>
+                <button class="filter-tab" onclick="filterAssignments('submitted')">Submitted</button>
+                <button class="filter-tab" onclick="filterAssignments('graded')">Graded</button>
+            </div>
+
+            <div class="assignments-grid" id="assignmentsGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        let allAssignments = [];
+
+        const assignmentsData = [
+            {
+                id: 1,
+                title: 'Quadratic Equations Problem Set',
+                subject: 'Mathematics',
+                description: 'Solve 20 problems involving quadratic equations and graph them.',
+                dueDate: '2024-12-30',
+                submittedDate: '2024-12-28',
+                status: 'graded',
+                score: 95,
+                totalScore: 100,
+                teacher: 'Mr. Smith'
+            },
+            {
+                id: 2,
+                title: 'Physics Lab Report',
+                subject: 'Physics',
+                description: 'Complete lab report on gravity and motion experiments.',
+                dueDate: '2025-01-05',
+                submittedDate: null,
+                status: 'pending',
+                score: null,
+                totalScore: 100,
+                teacher: 'Ms. Johnson'
+            },
+            {
+                id: 3,
+                title: 'Chemical Reaction Analysis',
+                subject: 'Chemistry',
+                description: 'Analyze three chemical reactions and write detailed explanations.',
+                dueDate: '2024-12-31',
+                submittedDate: '2024-12-30',
+                status: 'submitted',
+                score: null,
+                totalScore: 100,
+                teacher: 'Mr. Brown'
+            },
+            {
+                id: 4,
+                title: 'Programming Project',
+                subject: 'Computer Science',
+                description: 'Build a simple calculator application with GUI.',
+                dueDate: '2025-01-10',
+                submittedDate: null,
+                status: 'pending',
+                score: null,
+                totalScore: 100,
+                teacher: 'Ms. Wilson'
+            },
+            {
+                id: 5,
+                title: 'Essay on Literary Analysis',
+                subject: 'English',
+                description: 'Write 1500-word essay analyzing themes in the assigned novel.',
+                dueDate: '2024-12-29',
+                submittedDate: '2024-12-28',
+                status: 'graded',
+                score: 92,
+                totalScore: 100,
+                teacher: 'Ms. Davis'
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            allAssignments = assignmentsData;
+            renderAssignmentsData();
+        });
+
+        function renderAssignmentsData() {
+            document.getElementById('totalAssignments').textContent = allAssignments.length;
+            document.getElementById('completedCount').textContent = allAssignments.filter(a => a.status === 'graded' || a.status === 'submitted').length;
+            document.getElementById('pendingCount').textContent = allAssignments.filter(a => a.status === 'pending').length;
+            
+            const gradedAssignments = allAssignments.filter(a => a.score !== null);
+            const avgScore = gradedAssignments.length > 0 
+                ? Math.round(gradedAssignments.reduce((s, a) => s + a.score, 0) / gradedAssignments.length)
+                : 0;
+            document.getElementById('avgScore').textContent = avgScore + '%';
+
+            renderAssignments(allAssignments);
+        }
+
+        function renderAssignments(assignments) {
+            const grid = document.getElementById('assignmentsGrid');
+            grid.innerHTML = '';
+
+            assignments.forEach(assignment => {
+                const card = document.createElement('div');
+                card.className = `assignment-card assignment-${assignment.status}`;
+                
+                let statusText = assignment.status.charAt(0).toUpperCase() + assignment.status.slice(1);
+                let scoreDisplay = '';
+                
+                if (assignment.score !== null) {
+                    scoreDisplay = `
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${assignment.score}%"></div>
+                        </div>
+                        <div style="color: #6b7280; font-size: 14px;">Score: ${assignment.score}/${assignment.totalScore}</div>
+                    `;
+                }
+
+                const daysUntilDue = getDaysUntilDue(assignment.dueDate);
+                let dueStatus = daysUntilDue > 0 ? `${daysUntilDue} days left` : daysUntilDue === 0 ? 'Due today' : 'Overdue';
+
+                card.innerHTML = `
+                    <div class="assignment-title">📚 ${assignment.title}</div>
+                    <div class="assignment-meta">
+                        <div>📖 ${assignment.subject}</div>
+                        <div>📅 Due: ${assignment.dueDate}</div>
+                    </div>
+                    <div class="assignment-description">${assignment.description}</div>
+                    <div style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">
+                        👨‍🏫 ${assignment.teacher}
+                    </div>
+                    ${scoreDisplay}
+                    <div style="color: #9ca3af; font-size: 13px; margin-bottom: 10px;">
+                        ${assignment.submittedDate ? `Submitted: ${assignment.submittedDate}` : dueStatus}
+                    </div>
+                    <span class="status-badge status-${assignment.status}">${statusText}</span>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function getDaysUntilDue(dueDate) {
+            const today = new Date();
+            const due = new Date(dueDate);
+            const diffTime = due - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+
+        function filterAssignments(status) {
+            document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const filtered = status === 'all' ? allAssignments : allAssignments.filter(a => a.status === status);
+            renderAssignments(filtered);
+        }
+
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

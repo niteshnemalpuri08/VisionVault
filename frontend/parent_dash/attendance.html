@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Tracking - Parent Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8f9fa;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 32px;
+            top: 32px;
+            background: white;
+            color: #667eea;
+            border: 1px solid #e5e7eb;
+            padding: 10px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #f9fafb;
+            border-color: #667eea;
+        }
+
+        .header h1 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 24px 20px;
+            background: #f9fafb;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .alert-box {
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            border-color: #f59e0b;
+        }
+
+        .alert-danger {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+
+        .alert-box strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #1a1a1a;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 320px;
+            margin-top: 20px;
+        }
+
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .attendance-table th,
+        .attendance-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .attendance-table th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .attendance-table tr:hover {
+            background: #f9fafb;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-present {
+            background: #d1fae5;
+            color: #10b981;
+        }
+
+        .status-absent {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .back-btn {
+                position: static;
+                margin-bottom: 16px;
+                width: 100%;
+            }
+
+            .attendance-table {
+                font-size: 14px;
+            }
+
+            .attendance-table th,
+            .attendance-table td {
+                padding: 12px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+            <h1>📅 Attendance Tracking</h1>
+            <p>Monitor your child's attendance in detail</p>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-title">Overall Attendance Summary</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value" id="totalClasses">120</span>
+                    <span class="stat-label">Total Classes</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="presentClasses">102</span>
+                    <span class="stat-label">Present</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="absentClasses">18</span>
+                    <span class="stat-label">Absent</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="attendancePercent">85%</span>
+                    <span class="stat-label">Attendance Rate</span>
+                </div>
+            </div>
+
+            <div id="alertContainer"></div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-title">Attendance Trend Over Time</div>
+            <div class="chart-container">
+                <canvas id="attendanceTrendChart"></canvas>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-title">Subject-wise Attendance</div>
+            <div class="chart-container">
+                <canvas id="subjectAttendanceChart"></canvas>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-title">Recent Attendance Records</div>
+            <table class="attendance-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Subject</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="attendanceTableBody"></tbody>
+            </table>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-title">Monthly Attendance Pattern</div>
+            <div class="chart-container">
+                <canvas id="monthlyAttendanceChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let charts = {};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderAttendanceData();
+        });
+
+        function renderAttendanceData() {
+            const attendance = 85;
+            const total = 120;
+            const present = Math.round(total * attendance / 100);
+            const absent = total - present;
+
+            document.getElementById('totalClasses').textContent = total;
+            document.getElementById('presentClasses').textContent = present;
+            document.getElementById('absentClasses').textContent = absent;
+            document.getElementById('attendancePercent').textContent = attendance + '%';
+
+            renderAlerts(attendance);
+            renderCharts();
+            renderAttendanceTable();
+        }
+
+        function renderAlerts(attendance) {
+            const container = document.getElementById('alertContainer');
+            container.innerHTML = '';
+
+            if (attendance < 75) {
+                container.innerHTML = `
+                    <div class="alert-box alert-danger">
+                        <strong>⚠️ Low Attendance Alert</strong>
+                        Attendance is ${attendance}%, which is below the minimum required (75%). 
+                        Please ensure regular attendance to maintain academic progress.
+                    </div>
+                `;
+            } else if (attendance < 85) {
+                container.innerHTML = `
+                    <div class="alert-box alert-warning">
+                        <strong>⚠️ Attendance Reminder</strong>
+                        Current attendance is ${attendance}%. Encourage regular attendance to maintain good academic standing.
+                    </div>
+                `;
+            }
+        }
+
+        function renderCharts() {
+            const trendCtx = document.getElementById('attendanceTrendChart').getContext('2d');
+            charts.trend = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+                    datasets: [{
+                        label: 'Attendance %',
+                        data: [80, 82, 85, 84, 86, 85],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#10b981',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 70,
+                            max: 100,
+                            ticks: {
+                                color: '#9ca3af',
+                                font: { size: 12, family: 'Inter' }
+                            },
+                            grid: {
+                                color: '#f3f4f6'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#6b7280',
+                                font: { size: 12, family: 'Inter' }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            const subjectCtx = document.getElementById('subjectAttendanceChart').getContext('2d');
+            charts.subject = new Chart(subjectCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Math', 'Physics', 'Chemistry', 'CS', 'English'],
+                    datasets: [{
+                        label: 'Attendance %',
+                        data: [90, 85, 80, 95, 78],
+                        backgroundColor: '#667eea',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                color: '#9ca3af',
+                                font: { size: 12, family: 'Inter' }
+                            },
+                            grid: {
+                                color: '#f3f4f6'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#6b7280',
+                                font: { size: 12, family: 'Inter' }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            const monthlyCtx = document.getElementById('monthlyAttendanceChart').getContext('2d');
+            charts.monthly = new Chart(monthlyCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Attendance %',
+                        data: [82, 84, 85, 83, 86, 85],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#667eea',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 75,
+                            max: 100,
+                            ticks: {
+                                color: '#9ca3af',
+                                font: { size: 12, family: 'Inter' }
+                            },
+                            grid: {
+                                color: '#f3f4f6'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#6b7280',
+                                font: { size: 12, family: 'Inter' }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderAttendanceTable() {
+            const tbody = document.getElementById('attendanceTableBody');
+            const records = [
+                { date: '2024-12-27', subject: 'Mathematics', status: 'Present', notes: '-' },
+                { date: '2024-12-26', subject: 'Physics', status: 'Present', notes: '-' },
+                { date: '2024-12-25', subject: 'Chemistry', status: 'Absent', notes: 'Sick Leave' },
+                { date: '2024-12-24', subject: 'Computer Science', status: 'Present', notes: '-' },
+                { date: '2024-12-23', subject: 'English', status: 'Present', notes: '-' },
+                { date: '2024-12-22', subject: 'Mathematics', status: 'Present', notes: '-' },
+                { date: '2024-12-21', subject: 'Physics', status: 'Absent', notes: 'Family Emergency' }
+            ];
+
+            tbody.innerHTML = '';
+            records.forEach(record => {
+                const row = document.createElement('tr');
+                const statusClass = record.status === 'Present' ? 'status-present' : 'status-absent';
+                row.innerHTML = `
+                    <td>${record.date}</td>
+                    <td>${record.subject}</td>
+                    <td><span class="status-badge ${statusClass}">${record.status}</span></td>
+                    <td>${record.notes}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

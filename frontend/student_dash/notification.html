@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notifications - Student Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        * { box-sizing: border-box; }
+
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
@@ -16,7 +17,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -25,9 +26,37 @@
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 15px;
-            padding: 20px;
+            padding: 25px;
             margin-bottom: 30px;
             text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2em;
+        }
+
+        .header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f44336;
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9em;
+            box-shadow: 0 2px 8px rgba(244, 67, 54, 0.4);
         }
 
         .back-btn {
@@ -38,18 +67,56 @@
             border-radius: 25px;
             cursor: pointer;
             margin-bottom: 20px;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
         }
 
         .back-btn:hover {
             background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-3px);
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .filter-tabs {
             display: flex;
-            justify-content: center;
             gap: 10px;
-            margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
         .filter-tab {
@@ -59,114 +126,242 @@
             padding: 10px 20px;
             border-radius: 25px;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+        }
+
+        .filter-tab:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
         }
 
         .filter-tab.active {
             background: linear-gradient(135deg, #667eea, #764ba2);
             font-weight: 600;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .filter-tab .count {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.85em;
+            margin-left: 5px;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .bulk-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .bulk-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
         }
 
         .notification-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 15px;
-            padding: 20px;
+            padding: 25px;
             margin-bottom: 15px;
-            transition: transform 0.2s ease;
+            transition: all 0.3s ease;
             position: relative;
+            border: 2px solid transparent;
+            cursor: pointer;
         }
 
         .notification-card.unread {
-            border-left: 4px solid #667eea;
+            border-left: 5px solid #667eea;
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .notification-card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .notification-icon {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .notification-content-wrapper {
+            margin-left: 70px;
         }
 
         .notification-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            gap: 15px;
         }
 
         .notification-title {
             font-weight: 600;
-            font-size: 1.1em;
+            font-size: 1.15em;
+            margin-bottom: 5px;
+            flex: 1;
+        }
+
+        .notification-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .notification-time {
             opacity: 0.7;
-            font-size: 0.9em;
+            font-size: 0.85em;
         }
 
         .notification-content {
             margin-bottom: 15px;
-            line-height: 1.5;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+        .notification-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .notification-actions {
             display: flex;
             gap: 10px;
-            justify-content: flex-end;
         }
 
         .action-btn {
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: none;
-            padding: 8px 15px;
+            padding: 8px 16px;
             border-radius: 20px;
             cursor: pointer;
-            font-size: 0.9em;
-            transition: background 0.3s ease;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
         }
 
         .action-btn:hover {
             background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
         }
 
         .action-btn.delete {
-            background: rgba(244, 67, 54, 0.8);
+            background: rgba(244, 67, 54, 0.7);
         }
 
         .action-btn.delete:hover {
-            background: rgba(244, 67, 54, 1);
+            background: rgba(244, 67, 54, 0.9);
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
         }
 
         .priority-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            padding: 5px 10px;
+            padding: 5px 12px;
             border-radius: 15px;
-            font-size: 0.8em;
-            font-weight: 600;
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .priority-high {
             background: linear-gradient(135deg, #f44336, #d32f2f);
+            box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
         }
 
         .priority-medium {
             background: linear-gradient(135deg, #ff9800, #f57c00);
+            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
         }
 
         .priority-low {
             background: linear-gradient(135deg, #4caf50, #388e3c);
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+        }
+
+        .type-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
         }
 
         .empty-state {
             text-align: center;
-            padding: 50px 20px;
+            padding: 60px 20px;
             opacity: 0.7;
         }
 
         .empty-state .icon {
-            font-size: 4em;
+            font-size: 5em;
             margin-bottom: 20px;
+        }
+
+        .search-box {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 10px 20px;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+            min-width: 250px;
+        }
+
+        .search-box::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-box:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .notification-icon {
+                position: static;
+                margin-bottom: 15px;
+            }
+
+            .notification-content-wrapper {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
@@ -176,166 +371,350 @@
 
         <div class="header">
             <h1>🔔 Notifications</h1>
-            <p>Stay updated with important announcements and messages</p>
+            <p>Stay updated with important announcements</p>
+            <div class="notification-badge" id="unreadBadge">4</div>
         </div>
 
-        <div class="filter-tabs">
-            <button class="filter-tab active" onclick="filterNotifications('all')">All</button>
-            <button class="filter-tab" onclick="filterNotifications('unread')">Unread</button>
-            <button class="filter-tab" onclick="filterNotifications('academic')">Academic</button>
-            <button class="filter-tab" onclick="filterNotifications('events')">Events</button>
+        <div class="stats-bar" id="statsBar"></div>
+
+        <div class="controls-bar">
+            <div class="filter-tabs" id="filterTabs"></div>
+            <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search...">
         </div>
 
-        <div id="notificationsContainer">
-            <!-- Notifications will be populated here -->
+        <div class="controls-bar">
+            <div class="bulk-actions">
+                <button class="bulk-btn" onclick="markAllAsRead()">✓ Mark All Read</button>
+                <button class="bulk-btn" onclick="clearRead()">🗑️ Clear Read</button>
+            </div>
         </div>
+
+        <div id="notificationsContainer"></div>
     </div>
 
+    <script src="../auth.js"></script>
     <script>
+        // CONSISTENT DATA - Matches student performance
+        const STUDENT_DATA = {
+            roll: '24cse001',
+            name: 'Demo Student',
+            marks: { math: 92, physics: 87, chemistry: 89, cs: 95, english: 82 },
+            attendance: 94
+        };
+
         let currentFilter = 'all';
+        let searchQuery = '';
+        let currentUser = null;
         let notifications = [];
 
-        document.addEventListener('DOMContentLoaded', function() {
-            loadNotifications();
+        async function loadNotifications() {
+            try {
+                currentUser = authManager.getUser();
+                if (!currentUser) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                const response = await authManager.apiCall('/api/notifications?user_type=student&student_roll=' + (currentUser.roll || currentUser.username));
+
+                if (response.ok) {
+                    const data = await response.json();
+                    notifications = data.map(n => ({
+                        id: n.id,
+                        title: n.title,
+                        content: n.content,
+                        time: n.time,
+                        timestamp: new Date(n.created_at).getTime(),
+                        type: n.type,
+                        priority: n.priority,
+                        read: n.read,
+                        icon: n.icon
+                    }));
+                } else {
+                    console.error('Failed to load notifications');
+                    // Use fallback demo data
+                    notifications = [
+                        {
+                            id: 1,
+                            title: 'Mathematics Exam Result 🎉',
+                            content: `Congratulations! You scored 92% on your Mathematics exam. Excellent performance!`,
+                            time: '2 hours ago',
+                            timestamp: Date.now() - 2 * 60 * 60 * 1000,
+                            type: 'academic',
+                            priority: 'high',
+                            read: false,
+                            icon: '📐'
+                        },
+                        {
+                            id: 2,
+                            title: 'Computer Science Project Outstanding',
+                            content: `Your CS project received A grade (95%). Faculty impressed with implementation.`,
+                            time: '5 hours ago',
+                            timestamp: Date.now() - 5 * 60 * 60 * 1000,
+                            type: 'academic',
+                            priority: 'high',
+                            read: false,
+                            icon: '💻'
+                        },
+                        {
+                            id: 3,
+                            title: 'Attendance Achievement',
+                            content: `Great job! Your attendance reached 94%. Among top 10% students.`,
+                            time: '1 day ago',
+                            timestamp: Date.now() - 24 * 60 * 60 * 1000,
+                            type: 'achievement',
+                            priority: 'medium',
+                            read: false,
+                            icon: '🏆'
+                        },
+                        {
+                            id: 4,
+                            title: 'English Assignment Reminder',
+                            content: `Literature essay due in 3 days. Submit final version before deadline.`,
+                            time: '2 days ago',
+                            timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000,
+                            type: 'assignment',
+                            priority: 'high',
+                            read: false,
+                            icon: '📚'
+                        }
+                    ];
+                }
+            } catch (error) {
+                console.error('Failed to load notifications:', error);
+                // Use fallback demo data
+                notifications = [
+                    {
+                        id: 1,
+                        title: 'Mathematics Exam Result 🎉',
+                        content: `Congratulations! You scored 92% on your Mathematics exam. Excellent performance!`,
+                        time: '2 hours ago',
+                        timestamp: Date.now() - 2 * 60 * 60 * 1000,
+                        type: 'academic',
+                        priority: 'high',
+                        read: false,
+                        icon: '📐'
+                    },
+                    {
+                        id: 2,
+                        title: 'Computer Science Project Outstanding',
+                        content: `Your CS project received A grade (95%). Faculty impressed with implementation.`,
+                        time: '5 hours ago',
+                        timestamp: Date.now() - 5 * 60 * 60 * 1000,
+                        type: 'academic',
+                        priority: 'high',
+                        read: false,
+                        icon: '💻'
+                    },
+                    {
+                        id: 3,
+                        title: 'Attendance Achievement',
+                        content: `Great job! Your attendance reached 94%. Among top 10% students.`,
+                        time: '1 day ago',
+                        timestamp: Date.now() - 24 * 60 * 60 * 1000,
+                        type: 'achievement',
+                        priority: 'medium',
+                        read: false,
+                        icon: '🏆'
+                    },
+                    {
+                        id: 4,
+                        title: 'English Assignment Reminder',
+                        content: `Literature essay due in 3 days. Submit final version before deadline.`,
+                        time: '2 days ago',
+                        timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000,
+                        type: 'assignment',
+                        priority: 'high',
+                        read: false,
+                        icon: '📚'
+                    }
+                ];
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadNotifications();
+            updateStats();
+            renderFilterTabs();
+            renderNotifications();
+            setupSearch();
         });
 
-        function loadNotifications() {
-            // Mock notifications data - in real app, this would come from API
-            notifications = [
-                {
-                    id: 1,
-                    title: 'Mathematics Quiz Results',
-                    content: 'Your Mathematics quiz results are now available. You scored 92% on the recent calculus quiz. Great job!',
-                    time: '2 hours ago',
-                    type: 'academic',
-                    priority: 'high',
-                    read: false
-                },
-                {
-                    id: 2,
-                    title: 'Physics Lab Schedule Change',
-                    content: 'Due to maintenance work, the Physics lab session scheduled for tomorrow has been moved to next week.',
-                    time: '1 day ago',
-                    type: 'academic',
-                    priority: 'medium',
-                    read: false
-                },
-                {
-                    id: 3,
-                    title: 'Annual Science Fair Registration',
-                    content: 'Registration for the Annual Science Fair is now open. Submit your project proposals by March 15th.',
-                    time: '2 days ago',
-                    type: 'events',
-                    priority: 'high',
-                    read: true
-                },
-                {
-                    id: 4,
-                    title: 'Library Book Return Reminder',
-                    content: 'You have 3 books due for return this week. Please return them to avoid late fees.',
-                    time: '3 days ago',
-                    type: 'academic',
-                    priority: 'low',
-                    read: true
-                },
-                {
-                    id: 5,
-                    title: 'Sports Day 2024',
-                    content: 'Sports Day will be held on March 20th. All students are required to participate in at least one event.',
-                    time: '1 week ago',
-                    type: 'events',
-                    priority: 'medium',
-                    read: true
-                },
-                {
-                    id: 6,
-                    title: 'Computer Science Project Deadline',
-                    content: 'The final project submission deadline has been extended to March 25th. Make sure to submit on time.',
-                    time: '1 week ago',
-                    type: 'academic',
-                    priority: 'high',
-                    read: false
-                }
-            ];
+        function updateStats() {
+            const total = notifications.length;
+            const unread = notifications.filter(n => !n.read).length;
+            const high = notifications.filter(n => n.priority === 'high' && !n.read).length;
 
-            renderNotifications();
+            document.getElementById('unreadBadge').textContent = unread;
+            document.getElementById('statsBar').innerHTML = `
+                <div class="stat-item">
+                    <span class="stat-number">${total}</span>
+                    <span class="stat-label">Total</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">${unread}</span>
+                    <span class="stat-label">Unread</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">${high}</span>
+                    <span class="stat-label">High Priority</span>
+                </div>
+            `;
+        }
+
+        function renderFilterTabs() {
+            const types = {
+                all: 'All',
+                unread: 'Unread',
+                academic: 'Academic',
+                assignment: 'Assignments',
+                achievement: 'Achievements'
+            };
+
+            const container = document.getElementById('filterTabs');
+            container.innerHTML = '';
+
+            for (const [key, label] of Object.entries(types)) {
+                const count = key === 'all' ? notifications.length :
+                             key === 'unread' ? notifications.filter(n => !n.read).length :
+                             notifications.filter(n => n.type === key).length;
+
+                const tab = document.createElement('button');
+                tab.className = `filter-tab ${currentFilter === key ? 'active' : ''}`;
+                tab.innerHTML = `${label} <span class="count">${count}</span>`;
+                tab.onclick = () => filterNotifications(key);
+                container.appendChild(tab);
+            }
         }
 
         function renderNotifications() {
             const container = document.getElementById('notificationsContainer');
-            container.innerHTML = '';
-
-            let filteredNotifications = notifications;
+            let filtered = notifications;
 
             if (currentFilter !== 'all') {
-                if (currentFilter === 'unread') {
-                    filteredNotifications = notifications.filter(n => !n.read);
-                } else {
-                    filteredNotifications = notifications.filter(n => n.type === currentFilter);
-                }
+                filtered = currentFilter === 'unread' ?
+                    notifications.filter(n => !n.read) :
+                    notifications.filter(n => n.type === currentFilter);
             }
 
-            if (filteredNotifications.length === 0) {
+            if (searchQuery) {
+                filtered = filtered.filter(n =>
+                    n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    n.content.toLowerCase().includes(searchQuery.toLowerCase())
+                );
+            }
+
+            filtered.sort((a, b) => b.timestamp - a.timestamp);
+
+            if (filtered.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="icon">📭</div>
                         <h3>No notifications found</h3>
-                        <p>You don't have any ${currentFilter} notifications at the moment.</p>
                     </div>
                 `;
                 return;
             }
 
-            filteredNotifications.forEach(notification => {
+            container.innerHTML = '';
+            filtered.forEach(n => {
                 const card = document.createElement('div');
-                card.className = `notification-card ${!notification.read ? 'unread' : ''}`;
+                card.className = `notification-card ${!n.read ? 'unread' : ''}`;
+                card.onclick = (e) => {
+                    if (!e.target.closest('button')) markAsRead(n.id);
+                };
 
                 card.innerHTML = `
-                    <div class="priority-badge priority-${notification.priority}">
-                        ${notification.priority.toUpperCase()}
-                    </div>
-                    <div class="notification-header">
-                        <div class="notification-title">${notification.title}</div>
-                        <div class="notification-time">${notification.time}</div>
-                    </div>
-                    <div class="notification-content">${notification.content}</div>
-                    <div class="notification-actions">
-                        ${!notification.read ? `<button class="action-btn" onclick="markAsRead(${notification.id})">Mark as Read</button>` : ''}
-                        <button class="action-btn delete" onclick="deleteNotification(${notification.id})">Delete</button>
+                    <div class="notification-icon">${n.icon}</div>
+                    <div class="notification-content-wrapper">
+                        <div class="notification-header">
+                            <div>
+                                <div class="notification-title">${n.title}</div>
+                                <div class="notification-meta">
+                                    <span class="notification-time">🕐 ${n.time}</span>
+                                    <span class="type-badge">${n.type}</span>
+                                    <span class="priority-badge priority-${n.priority}">${n.priority}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notification-content">${n.content}</div>
+                        <div class="notification-footer">
+                            <div class="notification-actions">
+                                ${!n.read ? `<button class="action-btn primary" onclick="event.stopPropagation(); markAsRead(${n.id})">✓ Mark Read</button>` : ''}
+                                <button class="action-btn delete" onclick="event.stopPropagation(); deleteNotification(${n.id})">🗑️ Delete</button>
+                            </div>
+                        </div>
                     </div>
                 `;
-
                 container.appendChild(card);
+            });
+        }
+
+        function setupSearch() {
+            document.getElementById('searchBox').addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+                renderNotifications();
             });
         }
 
         function filterNotifications(filter) {
             currentFilter = filter;
-
-            // Update active tab
-            document.querySelectorAll('.filter-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            event.target.classList.add('active');
-
+            renderFilterTabs();
             renderNotifications();
         }
 
-        function markAsRead(id) {
-            const notification = notifications.find(n => n.id === id);
-            if (notification) {
-                notification.read = true;
+        async function markAsRead(id) {
+            try {
+                const response = await authManager.apiCall(`/api/notifications/${id}/read`, {
+                    method: 'PATCH',
+                    params: {
+                        user_type: currentUser.role,
+                        student_roll: currentUser.role === 'student' ? currentUser.username : null
+                    }
+                });
+
+                if (response && response.status === 'success') {
+                    const n = notifications.find(x => x.id === id);
+                    if (n) {
+                        n.read = true;
+                        updateStats();
+                        renderFilterTabs();
+                        renderNotifications();
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to mark notification as read:', error);
+            }
+        }
+
+        function markAllAsRead() {
+            notifications.forEach(n => n.read = true);
+            updateStats();
+            renderFilterTabs();
+            renderNotifications();
+        }
+
+        function clearRead() {
+            if (confirm('Delete all read notifications?')) {
+                notifications = notifications.filter(n => !n.read);
+                updateStats();
+                renderFilterTabs();
                 renderNotifications();
             }
         }
 
         function deleteNotification(id) {
-            notifications = notifications.filter(n => n.id !== id);
-            renderNotifications();
+            if (confirm('Delete this notification?')) {
+                notifications = notifications.filter(n => n.id !== id);
+                updateStats();
+                renderFilterTabs();
+                renderNotifications();
+            }
         }
 
+
         function goBack() {
-            window.location.href = 'index.html';
+            window.history.back();
         }
     </script>
 </body>

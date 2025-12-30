@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Attendance Calculator - Student Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css">
 
     <style>
         body {
@@ -41,6 +40,7 @@
             cursor: pointer;
             margin-bottom: 20px;
             transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
         }
 
         .back-btn:hover {
@@ -76,34 +76,6 @@
         .info-label {
             opacity: 0.8;
             font-size: 0.9em;
-        }
-
-        .progress-ring {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 10px;
-        }
-
-        .progress-ring-circle {
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-        }
-
-        .progress-ring-circle-bg {
-            fill: none;
-            stroke: rgba(255, 255, 255, 0.2);
-            stroke-width: 8;
-        }
-
-        .progress-ring-circle-fill {
-            fill: none;
-            stroke: #4CAF50;
-            stroke-width: 8;
-            stroke-linecap: round;
-            stroke-dasharray: 220;
-            stroke-dashoffset: 220;
-            transition: stroke-dashoffset 0.5s ease;
         }
 
         .calculator-grid {
@@ -158,6 +130,8 @@
             font-size: 16px;
             text-align: center;
             transition: all 0.3s ease;
+            color: #333;
+            font-family: 'Poppins', sans-serif;
         }
 
         .input-group input:focus, .input-group select:focus {
@@ -187,6 +161,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            font-family: 'Poppins', sans-serif;
         }
 
         .calc-btn:hover {
@@ -223,10 +198,6 @@
             font-size: 2.5em;
             font-weight: 700;
             margin-bottom: 8px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         .result-label {
@@ -242,71 +213,11 @@
             line-height: 1.4;
         }
 
-        .chart-section {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            grid-column: 1 / -1;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin-top: 20px;
-        }
-
-        .scenarios-section {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-
-        .scenarios-title {
-            text-align: center;
-            font-size: 1.3em;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        .scenario-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
-
-        .scenario-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .scenario-card:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .scenario-name {
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .scenario-details {
-            font-size: 0.9em;
-            opacity: 0.8;
-        }
-
         .alert {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             padding: 15px;
-            margin-bottom: 15px;
+            margin-top: 15px;
             border-left: 4px solid #ff9800;
         }
 
@@ -331,14 +242,10 @@
             animation: fadeIn 0.5s ease;
         }
 
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        @media (max-width: 768px) {
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -364,11 +271,11 @@
                 <div class="calculator-inputs">
                     <div class="input-group">
                         <label for="attendedInput">Classes Attended</label>
-                        <input type="number" id="attendedInput" placeholder="e.g., 75" min="0">
+                        <input type="number" id="attendedInput" placeholder="e.g., 113" min="0">
                     </div>
                     <div class="input-group">
                         <label for="totalInput">Total Classes</label>
-                        <input type="number" id="totalInput" placeholder="e.g., 100" min="1">
+                        <input type="number" id="totalInput" placeholder="e.g., 120" min="1">
                     </div>
                     <div class="input-group">
                         <label for="targetPercent">Target Percentage</label>
@@ -430,82 +337,56 @@
                 </div>
             </div>
         </div>
-
-
-
-        <div class="scenarios-section">
-            <div class="scenarios-title">💡 Quick Scenarios</div>
-            <div class="scenario-cards" id="scenarioCards">
-                <!-- Scenario cards will be populated here -->
-            </div>
-        </div>
     </div>
 
+    <script src="../auth.js"></script>
     <script>
-        let currentStudentData = null;
-        let attendanceChart = null;
+        // CONSISTENT DATA - Same across ALL pages
+        const STUDENT_DATA = {
+            user: {
+                roll: '24cse001',
+                name: 'Demo Student',
+                class: '12th Grade'
+            },
+            attendance: 94,  // Overall attendance percentage
+            avg_marks: 89.0,
+            totalClasses: 120,
+            presentClasses: 113,
+            absentClasses: 7
+        };
 
         document.addEventListener('DOMContentLoaded', function() {
             loadStudentInfo();
-            loadScenarios();
-            initializeChart();
         });
 
-        async function loadStudentInfo() {
-            // Get user data from localStorage
-            const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        function loadStudentInfo() {
+            const data = STUDENT_DATA;
+            const attendance = data.attendance;
+            const attendanceStatus = getAttendanceStatus(attendance);
 
-            if (userData.username) {
-                try {
-                    const response = await fetch(`/api/students/username/${userData.username}`);
-                    const studentData = await response.json();
-                    currentStudentData = studentData;
+            document.getElementById('studentInfo').innerHTML = `
+                <div class="info-card">
+                    <span class="info-value">${attendance}%</span>
+                    <span class="info-label">Current Attendance</span>
+                    <div class="alert ${attendanceStatus.class}">${attendanceStatus.message}</div>
+                </div>
+                <div class="info-card">
+                    <span class="info-value">${data.avg_marks}%</span>
+                    <span class="info-label">Average Marks</span>
+                </div>
+                <div class="info-card">
+                    <span class="info-value">${data.presentClasses}/${data.totalClasses}</span>
+                    <span class="info-label">Classes (Present/Total)</span>
+                </div>
+                <div class="info-card">
+                    <span class="info-value">${data.user.roll}</span>
+                    <span class="info-label">Roll Number</span>
+                </div>
+            `;
 
-                    if (studentData.name) {
-                        const attendance = studentData.attendance;
-                        const attendanceStatus = getAttendanceStatus(attendance);
-
-                        document.getElementById('studentInfo').innerHTML = `
-                            <div class="info-card">
-                                <div class="progress-ring">
-                                    <svg class="progress-ring-circle" width="80" height="80">
-                                        <circle class="progress-ring-circle-bg" cx="40" cy="40" r="35"></circle>
-                                        <circle class="progress-ring-circle-fill" cx="40" cy="40" r="35"
-                                                style="stroke-dashoffset: ${220 - (attendance / 100) * 220}"></circle>
-                                    </svg>
-                                </div>
-                                <span class="info-value">${attendance}%</span>
-                                <span class="info-label">Current Attendance</span>
-                                <div class="alert ${attendanceStatus.class}">${attendanceStatus.message}</div>
-                            </div>
-                            <div class="info-card">
-                                <span class="info-value">${studentData.avg_marks}%</span>
-                                <span class="info-label">Average Marks</span>
-                            </div>
-                            <div class="info-card">
-                                <span class="info-value">${studentData.roll}</span>
-                                <span class="info-label">Roll Number</span>
-                            </div>
-                            <div class="info-card">
-                                <span class="info-value">${studentData.class}</span>
-                                <span class="info-label">Class</span>
-                            </div>
-                        `;
-
-                        // Prefill inputs with current data
-                        document.getElementById('attendedInput').value = Math.round((attendance / 100) * 100);
-                        document.getElementById('totalInput').value = 100;
-
-                        // Update chart with current data
-                        updateChart(attendance);
-                    }
-                } catch (error) {
-                    console.error('Error loading student data:', error);
-                    document.getElementById('studentInfo').innerHTML = '<p>Unable to load student information.</p>';
-                }
-            } else {
-                document.getElementById('studentInfo').innerHTML = '<p>Please login to view your information.</p>';
-            }
+            // Prefill inputs with current data
+            document.getElementById('attendedInput').value = data.presentClasses;
+            document.getElementById('totalInput').value = data.totalClasses;
         }
 
         function getAttendanceStatus(attendance) {
@@ -522,7 +403,7 @@
             const targetPercent = parseInt(document.getElementById('targetPercent').value) / 100;
 
             if (isNaN(attended) || isNaN(total) || attended < 0 || total <= 0 || attended > total) {
-                showAlert('Please enter valid numbers. Attended classes should be less than or equal to total classes.', 'danger');
+                alert('Please enter valid numbers. Attended classes should be less than or equal to total classes.');
                 return;
             }
 
@@ -532,9 +413,7 @@
                 return;
             }
 
-            // Formula: Classes needed X where (attended + X) / (total + X) >= targetPercent
             const classesNeeded = Math.ceil((targetPercent * total - attended) / (1 - targetPercent));
-
             displayResult(classesNeeded, `Classes needed for ${(targetPercent * 100).toFixed(0)}%`, `You need to attend ${classesNeeded} more classes out of the next ${classesNeeded} to reach your target.`);
         }
 
@@ -544,7 +423,7 @@
             const targetPercent = parseInt(document.getElementById('targetPercent').value) / 100;
 
             if (isNaN(attended) || isNaN(total) || attended < 0 || total <= 0) {
-                showAlert('Please enter valid numbers.', 'danger');
+                alert('Please enter valid numbers.');
                 return;
             }
 
@@ -554,7 +433,6 @@
                 return;
             }
 
-            // Formula: Classes that can be bunked Y where (attended) / (total + Y) >= targetPercent
             const classesBunkable = Math.floor((attended / targetPercent) - total);
 
             if (classesBunkable <= 0) {
@@ -571,7 +449,7 @@
             const futureRate = parseInt(document.getElementById('futureAttendance').value) / 100;
 
             if (isNaN(attended) || isNaN(total) || isNaN(futureClasses) || attended < 0 || total <= 0 || futureClasses < 0) {
-                showAlert('Please enter valid numbers for all fields.', 'danger');
+                alert('Please enter valid numbers for all fields.');
                 return;
             }
 
@@ -591,7 +469,7 @@
             const targetPercent = parseInt(document.getElementById('targetPercent').value) / 100;
 
             if (isNaN(attended) || isNaN(total) || isNaN(futureClasses) || attended < 0 || total <= 0 || futureClasses <= 0) {
-                showAlert('Please enter valid numbers for all fields.', 'danger');
+                alert('Please enter valid numbers for all fields.');
                 return;
             }
 
@@ -625,152 +503,20 @@
                     <div class="result-value">${value}</div>
                     <div class="result-label">${label}</div>
                     <div class="result-details">${details}</div>
-                    <div class="alert ${alertClass}" style="margin-top: 15px;">${getStatusMessage(value, alertClass)}</div>
+                    <div class="alert ${alertClass}" style="margin-top: 15px;">${getStatusMessage(alertClass)}</div>
                 </div>
             `;
         }
 
-        function getStatusMessage(value, alertClass) {
+        function getStatusMessage(alertClass) {
             if (alertClass === 'alert-success') return 'Great job! Keep it up! 🎉';
             if (alertClass === 'alert-danger') return 'Action needed to improve attendance 🚨';
             if (alertClass === 'alert-info') return 'Monitor your attendance closely 👀';
             return 'Keep tracking your progress 📊';
         }
 
-        function showAlert(message, type = 'info') {
-            // Create a temporary alert
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type} fade-in`;
-            alertDiv.innerHTML = message;
-            alertDiv.style.position = 'fixed';
-            alertDiv.style.top = '20px';
-            alertDiv.style.right = '20px';
-            alertDiv.style.zIndex = '1000';
-            alertDiv.style.maxWidth = '300px';
-
-            document.body.appendChild(alertDiv);
-
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 3000);
-        }
-
-        function initializeChart() {
-            const ctx = document.getElementById('attendanceChart').getContext('2d');
-            attendanceChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Current'],
-                    datasets: [{
-                        label: 'Attendance %',
-                        data: [0],
-                        borderColor: 'rgba(102, 126, 234, 1)',
-                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: 'rgba(102, 126, 234, 1)',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                color: 'white',
-                                font: { size: 12 }
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                color: 'white',
-                                font: { size: 12 }
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
-        }
-
-        function updateChart(attendance) {
-            if (attendanceChart) {
-                attendanceChart.data.labels = ['Current Attendance'];
-                attendanceChart.data.datasets[0].data = [attendance];
-                attendanceChart.update();
-            }
-        }
-
-        function loadScenarios() {
-            const scenarios = [
-                {
-                    name: 'Minimum Requirement',
-                    details: 'Calculate classes needed to reach 75% attendance',
-                    action: () => {
-                        document.getElementById('targetPercent').value = '75';
-                        document.getElementById('attendedInput').focus();
-                    }
-                },
-                {
-                    name: 'Safe Zone (80%)',
-                    details: 'Plan for 80% attendance - recommended for most students',
-                    action: () => {
-                        document.getElementById('targetPercent').value = '80';
-                        document.getElementById('attendedInput').focus();
-                    }
-                },
-                {
-                    name: 'High Achiever',
-                    details: 'Aim for 90%+ attendance for academic excellence',
-                    action: () => {
-                        document.getElementById('targetPercent').value = '90';
-                        document.getElementById('attendedInput').focus();
-                    }
-                },
-                {
-                    name: 'Predict Next Month',
-                    details: 'Forecast attendance with 20 future classes at 85% rate',
-                    action: () => {
-                        document.getElementById('futureClasses').value = '20';
-                        document.getElementById('futureAttendance').value = '85';
-                        predictFinalAttendance();
-                    }
-                }
-            ];
-
-            const container = document.getElementById('scenarioCards');
-            container.innerHTML = '';
-
-            scenarios.forEach(scenario => {
-                const card = document.createElement('div');
-                card.className = 'scenario-card';
-                card.innerHTML = `
-                    <div class="scenario-name">${scenario.name}</div>
-                    <div class="scenario-details">${scenario.details}</div>
-                `;
-                card.onclick = scenario.action;
-                container.appendChild(card);
-            });
-        }
-
         function goBack() {
-            window.location.href = 'index.html';
+            window.history.back();
         }
     </script>
 </body>

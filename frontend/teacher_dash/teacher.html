@@ -250,6 +250,14 @@
             gap: 15px;
         }
 
+        .subject-attendance, .student-list {
+            display: none;
+        }
+
+        .subject-attendance.show, .student-list.show {
+            display: block;
+        }
+
         .action-btn {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -482,6 +490,10 @@
                     <div class="action-icon">📈</div>
                     View Analytics
                 </button>
+                <button class="action-btn" onclick="toggleSubjectOverview()">
+                    <div class="action-icon">📋</div>
+                    Subject Overview
+                </button>
             </div>
         </div>
 
@@ -492,28 +504,7 @@
             </div>
         </div>
 
-        <div class="dashboard-grid">
-            <div class="dashboard-card" onclick="navigateTo('section.html')">
-                <div class="card-icon">👥</div>
-                <div class="card-title">My Sections</div>
-                <div class="card-description">Mark attendance for your students</div>
-            </div>
-            <div class="dashboard-card" onclick="navigateTo('report.html')">
-                <div class="card-icon">📋</div>
-                <div class="card-title">Reports</div>
-                <div class="card-description">Generate attendance reports</div>
-            </div>
-            <div class="dashboard-card" onclick="navigateTo('analytics.html')">
-                <div class="card-icon">📊</div>
-                <div class="card-title">Advanced Analytics</div>
-                <div class="card-description">Heatmaps, trends, and insights</div>
-            </div>
-            <div class="dashboard-card" onclick="navigateTo('alerts.html')">
-                <div class="card-icon">🚨</div>
-                <div class="card-title">Alerts</div>
-                <div class="card-description">View student alerts and notifications</div>
-            </div>
-        </div>
+
 
         <div class="recent-activity">
             <div class="activity-title">Recent Activity</div>
@@ -540,16 +531,9 @@
             </div>
         </div>
 
-        <div class="student-list">
-            <h3>My Students</h3>
-            <div class="student-grid" id="studentGrid">
-                <!-- Student cards will be populated here -->
-            </div>
-        </div>
-
-
     </div>
 
+    <script src="../auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             loadUserData();
@@ -557,15 +541,15 @@
         });
 
         function loadUserData() {
-            // Get user data from localStorage (set during login)
-            const userData = JSON.parse(localStorage.getItem('user') || '{}');
+            // Prefer authManager for consistent session access
+            const userData = (window.authManager && authManager.getUser()) || JSON.parse(localStorage.getItem('user') || '{}');
 
-            if (userData.name) {
+            if (userData && userData.name) {
                 document.getElementById('userName').textContent = `Welcome back, ${userData.name}!`;
                 document.getElementById('userAvatar').textContent = userData.name.charAt(0).toUpperCase();
             }
 
-            if (userData.role) {
+            if (userData && userData.role) {
                 document.getElementById('userRole').textContent = userData.role.charAt(0).toUpperCase() + userData.role.slice(1) + ' Dashboard';
             }
         }
@@ -573,8 +557,8 @@
         async function loadStudentData() {
             try {
                 // Get user data
-                const userData = JSON.parse(localStorage.getItem('user') || '{}');
-                const username = userData.username;
+                const userData = (window.authManager && authManager.getUser()) || JSON.parse(localStorage.getItem('user') || '{}');
+                const username = userData && userData.username;
 
                 if (!username) {
                     alert('Please login first');
@@ -583,18 +567,7 @@
                 }
 
                 // Fetch teacher dashboard data
-                const dashboardResponse = await fetch(`/api/teacher/${username}/dashboard`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-
-                if (dashboardResponse.status === 401) {
-                    alert('Session expired. Please login again.');
-                    window.location.href = '../login.html';
-                    return;
-                }
-
+                const dashboardResponse = await authManager.apiCall(`/api/teacher/${username}/dashboard`);
                 const dashboardData = await dashboardResponse.json();
 
                 // Update stats from dashboard API
@@ -604,11 +577,7 @@
                 document.getElementById('atRiskCount').textContent = dashboardData.stats.at_risk_count;
 
                 // Fetch accessible students for display
-                const studentsResponse = await fetch(`/api/teachers/${username}/accessible-students`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
+                const studentsResponse = await authManager.apiCall(`/api/teachers/${username}/accessible-students`);
                 const students = await studentsResponse.json();
 
                 // Display first 12 students
@@ -717,50 +686,58 @@
 
         // Quick action functions
         function markAttendance() {
-            navigateTo('section.html');
+            window.location.href = 'section.html';
         }
 
         function addAssignment() {
-            // Navigate to assignment creation page or open modal
-            alert('Add Assignment functionality - Navigate to assignment page');
+            // For now, navigate to a placeholder or show message
+            alert('Assignment creation feature coming soon!');
         }
 
         function recordMarks() {
-            // Navigate to marks recording page
-            alert('Record Marks functionality - Navigate to marks page');
+            // For now, navigate to a placeholder or show message
+            alert('Marks recording feature coming soon!');
         }
 
         function generateReport() {
-            navigateTo('report.html');
+            window.location.href = 'report.html';
         }
 
         function sendNotification() {
-            // Open notification modal or navigate to notifications page
-            alert('Send Notification functionality - Open notification modal');
+            // For now, show message
+            alert('Notification feature coming soon!');
         }
 
         function viewAnalytics() {
-            navigateTo('analytics.html');
+            window.location.href = 'analytics.html';
         }
 
         // Student action functions
         function viewStudentDetails(rollNumber) {
-            // Navigate to student details page
-            alert(`View details for student: ${rollNumber}`);
+            // For now, show details in alert
+            alert(`Student Details for Roll: ${rollNumber}\n\nFeature coming soon!`);
         }
 
         function contactParent(rollNumber) {
-            // Open contact parent modal or navigate to contact page
-            alert(`Contact parent for student: ${rollNumber}`);
+            // For now, show contact info
+            alert(`Contact Parent for Student Roll: ${rollNumber}\n\nFeature coming soon!`);
         }
 
-        function navigateTo(page) {
-            window.location.href = page;
+        function toggleSubjectOverview() {
+            const subjectSection = document.querySelector('.subject-attendance');
+            subjectSection.classList.toggle('show');
+        }
+
+        function toggleMyStudents() {
+            const studentSection = document.querySelector('.student-list');
+            studentSection.classList.toggle('show');
         }
 
         function logout() {
-            localStorage.removeItem('user');
-            window.location.href = '../login.html';
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('user');
+                window.location.href = '../login.html';
+            }
         }
     </script>
 </body>

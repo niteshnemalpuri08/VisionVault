@@ -1,0 +1,12 @@
+.venv   DIR     374570158       2025-12-30 10:32:19.459245
+venv    DIR     25907784        2025-11-30 21:23:01.750450
+backend/update_student_names.py FILE    424     2025-12-30 13:52:11.163094
+backend/assign_teachers.py      FILE    841     2025-12-30 13:26:05.555877
+backend/assign_teacher_sections.py      FILE    1734    2025-12-30 13:31:06.564183
+backend/check_parent_credentials.py     FILE    1198    2025-12-30 11:49:15.077884
+backend/update_parent_credentials.py    FILE    1953    2025-12-30 11:44:48.569065
+backend/enhanced_model.pkl      FILE    639829  2025-12-14 12:17:27.179702
+frontend/gietlogo.jpg   FILE    61766   2025-12-01 21:33:59.507851
+test_predict_api.py     FILE    462     2025-12-30 11:12:15.269558
+
+Note: sizes are in bytes.

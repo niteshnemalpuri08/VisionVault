@@ -39,18 +39,11 @@
             cursor: pointer;
             margin-bottom: 20px;
             transition: background 0.3s ease;
+            font-family: 'Poppins', sans-serif;
         }
 
         .back-btn:hover {
             background: rgba(255, 255, 255, 0.3);
-        }
-
-        .attendance-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
         }
 
         .attendance-summary {
@@ -59,8 +52,6 @@
             gap: 20px;
             margin-bottom: 30px;
         }
-
-
 
         .summary-item {
             background: rgba(255, 255, 255, 0.1);
@@ -79,37 +70,6 @@
         .summary-item p {
             margin: 0;
             opacity: 0.8;
-        }
-
-        .attendance-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .attendance-table th,
-        .attendance-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .attendance-table th {
-            background: rgba(255, 255, 255, 0.1);
-            font-weight: 600;
-        }
-
-        .status-present {
-            color: #4CAF50;
-            font-weight: 600;
-        }
-
-        .status-absent {
-            color: #f44336;
-            font-weight: 600;
         }
 
         .subjects-grid {
@@ -143,8 +103,6 @@
         }
 
         .attendance-badge {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
-            color: white;
             padding: 5px 15px;
             border-radius: 20px;
             font-weight: 600;
@@ -239,93 +197,93 @@
     </div>
 
     <script>
+        // CONSISTENT DATA - Same across ALL pages
+        const STUDENT_DATA = {
+            user: {
+                username: 'student_demo',
+                roll: '24cse001',
+                name: 'Demo Student',
+                class: '12th Grade'
+            },
+            subjects: [
+                { name: 'Mathematics', attendance: 95, present: 19, total: 20 },
+                { name: 'Physics', attendance: 90, present: 18, total: 20 },
+                { name: 'Chemistry', attendance: 92, present: 18, total: 20 },
+                { name: 'Computer Science', attendance: 98, present: 20, total: 20 },
+                { name: 'English', attendance: 88, present: 18, total: 20 },
+                { name: 'Physical Education', attendance: 100, present: 20, total: 20 }
+            ]
+        };
+
         document.addEventListener('DOMContentLoaded', function() {
             loadAttendanceData();
         });
 
-        // Deterministic hash-based helper to generate consistent pseudo-random values
-        function hashToRange(seed, min, max) {
-            let h = 2166136261 >>> 0;
-            for (let i = 0; i < seed.length; i++) {
-                h ^= seed.charCodeAt(i);
-                h = Math.imul(h, 16777619) >>> 0;
-            }
-            return min + (h % (max - min + 1));
-        }
-
         async function loadAttendanceData() {
-            // Get user data from localStorage
-            const userData = JSON.parse(localStorage.getItem('user') || '{}');
-
-            if (userData.username) {
+            // Prefer backend data when available
+            const user = (window.authManager && authManager.getUser()) || JSON.parse(localStorage.getItem('user') || '{}');
+            if (user && user.username) {
                 try {
-                    const response = await fetch(`/api/students/username/${userData.username}`);
-                    const studentData = await response.json();
+                    const studentResp = await authManager.apiCall(`/api/students/username/${user.username}`);
+                    const studentData = await studentResp.json();
 
-                    if (studentData.attendance !== undefined) {
-                        // Use real attendance data
-                        const overallAttendance = studentData.attendance;
+                    // Try per-subject attendance rows first
+                    if (studentData.roll) {
+                        const saResp = await authManager.apiCall(`/api/subject-attendance?student_roll=${studentData.roll}`);
+                        const saRows = await saResp.json();
+                        if (Array.isArray(saRows) && saRows.length > 0) {
+                            // Convert rows into subject cards format
+                            const subjects = saRows.map(r => ({
+                                name: r.subject || r.name || 'Unknown',
+                                attendance: Math.round(r.attendance || r.attendance_percentage || r.attendance_percentage || 0),
+                                present: r.attended_classes || r.present || 0,
+                                total: r.total_classes || r.total || 10
+                            }));
 
-                        // First try authoritative per-subject rows from /api/subject-attendance/<roll>
-                        try {
-                            if (studentData.roll) {
-                                const saResp = await fetch(`/api/subject-attendance/${studentData.roll}`);
-                                if (saResp.ok) {
-                                    const saRows = await saResp.json();
-                                    if (Array.isArray(saRows) && saRows.length > 0) {
-                                        renderFromSubjectData(saRows);
-                                        return; // done
-                                    }
-                                }
-                            }
-                        } catch (e) {
-                            console.warn('Could not fetch subject-attendance rows, falling back:', e);
-                        }
+                            // Update totals
+                            renderSubjectCards(subjects);
 
-                        // Next prefer subject_attendance included in student object
-                        if (Array.isArray(studentData.subject_attendance) && studentData.subject_attendance.length > 0) {
-                            renderFromSubjectData(studentData.subject_attendance);
-                        } else {
-                            // Generate subject-wise view from overall attendance if API didn't provide details
-                            renderSubjectAttendance(overallAttendance);
+                            let totalClasses = subjects.reduce((s, x) => s + x.total, 0);
+                            let totalPresent = subjects.reduce((s, x) => s + x.present, 0);
+                            document.getElementById('totalClasses').textContent = totalClasses;
+                            document.getElementById('presentClasses').textContent = totalPresent;
+                            document.getElementById('absentClasses').textContent = totalClasses - totalPresent;
+                            document.getElementById('attendancePercent').textContent = Math.round((totalPresent / totalClasses) * 100) + '%';
+                            return;
                         }
                     }
-                } catch (error) {
-                    console.error('Error loading student data:', error);
-                    // Fallback to mock data
-                    loadMockAttendanceData();
+
+                    // If no per-subject rows, use studentData.attendance to generate subjects
+                    if (typeof studentData.attendance === 'number') {
+                        renderSubjectAttendance(studentData.attendance);
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('Could not fetch attendance from backend, falling back to mock:', e);
                 }
-            } else {
-                // Fallback to mock data
-                loadMockAttendanceData();
             }
-        }
 
-        function loadMockAttendanceData() {
-            // Mock attendance data - 10 classes per subject
-            const subjects = ['Mathematics', 'Physics', 'Chemistry', 'Computer Science', 'English'];
-            const subjectStats = {};
-            const username = (JSON.parse(localStorage.getItem('user') || '{}').username) || 'guest';
+            // Fallback to mock data
+            const subjects = STUDENT_DATA.subjects;
+            renderSubjectCards(subjects);
 
-            // Deterministic mock generation so values don't change on reload
-            subjects.forEach(subject => {
-                subjectStats[subject] = { total: 10, present: 0 };
-                const variation = hashToRange(username + '|' + subject, -3, 3); // ±3%
-                const basePercent = 80; // base 80% for mock users
-                const percent = Math.max(0, Math.min(100, basePercent + variation));
-                subjectStats[subject].present = Math.round((percent / 100) * subjectStats[subject].total);
-            });
-
-            const container = document.getElementById('subjectsGrid');
-            container.innerHTML = ''; // clear any existing cards
             let totalClasses = 0;
             let totalPresent = 0;
+            subjects.forEach(subject => { totalClasses += subject.total; totalPresent += subject.present; });
+            document.getElementById('totalClasses').textContent = totalClasses;
+            document.getElementById('presentClasses').textContent = totalPresent;
+            document.getElementById('absentClasses').textContent = totalClasses - totalPresent;
+            document.getElementById('attendancePercent').textContent = Math.round((totalPresent / totalClasses) * 100) + '%';
+        }
 
-            Object.keys(subjectStats).forEach(subject => {
-                const stats = subjectStats[subject];
-                const absent = stats.total - stats.present;
-                const percent = Math.round((stats.present / stats.total) * 100);
+        function renderSubjectCards(subjects) {
+            const container = document.getElementById('subjectsGrid');
+            container.innerHTML = '';
 
+            subjects.forEach(subject => {
+                const absent = subject.total - subject.present;
+                const percent = subject.attendance;
+                
                 let attendanceClass = 'excellent';
                 if (percent >= 90) attendanceClass = 'excellent';
                 else if (percent >= 80) attendanceClass = 'good';
@@ -336,105 +294,8 @@
                 card.className = 'subject-card';
                 card.innerHTML = `
                     <div class="subject-header">
-                        <div class="subject-name">${subject}</div>
-                        <div class="attendance-badge ${attendanceClass}">${percent}%</div>
-                    </div>
-
-                    <div class="subject-stats">
-                        <div class="stat-item">
-                            <span class="stat-value">${stats.present}</span>
-                            <span class="stat-label">Present</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value">${absent}</span>
-                            <span class="stat-label">Absent</span>
-                        </div>
-                    </div>
-
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${percent}%"></div>
-                    </div>
-
-                    <div class="subject-details">
-                        <div class="detail-item">
-                            <span>Total Classes:</span>
-                            <span>${stats.total}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>Attendance Rate:</span>
-                            <span>${percent}%</span>
-                        </div>
-                    </div>
-                `;
-
-                container.appendChild(card);
-
-                totalClasses += stats.total;
-                totalPresent += stats.present;
-            });
-
-            // Update overall summary
-            document.getElementById('totalClasses').textContent = totalClasses;
-            document.getElementById('presentClasses').textContent = totalPresent;
-            document.getElementById('absentClasses').textContent = totalClasses - totalPresent;
-            document.getElementById('attendancePercent').textContent = Math.round((totalPresent / totalClasses) * 100) + '%';
-        }
-
-        function renderSubjectAttendance(overallAttendance) {
-            const subjects = ['Mathematics', 'Physics', 'Chemistry', 'Computer Science', 'English'];
-            const container = document.getElementById('subjectsGrid');
-            container.innerHTML = ''; // clear existing cards
-
-            // Use consistent attendance data - 10 classes per subject = 50 total classes
-            const subjectTotalClasses = 10;
-            const totalClasses = subjects.length * subjectTotalClasses;
-
-            // Generate subject-wise attendance with deterministic variations around overall attendance
-            const subjectAttendances = [];
-            let totalPresentClasses = 0;
-            const username = (JSON.parse(localStorage.getItem('user') || '{}').username) || 'guest';
-
-            subjects.forEach(subject => {
-                // Deterministic small variation around the overall attendance (±3%)
-                const variation = hashToRange(username + '|' + subject, -3, 3); // integer percent
-                const subjectAttendance = Math.max(0, Math.min(100, overallAttendance + variation));
-                const subjectPresent = Math.round((subjectAttendance / 100) * subjectTotalClasses);
-                const subjectAbsent = subjectTotalClasses - subjectPresent;
-
-                subjectAttendances.push({
-                    name: subject,
-                    attendance: subjectAttendance,
-                    present: subjectPresent,
-                    absent: subjectAbsent
-                });
-
-                totalPresentClasses += subjectPresent;
-            });
-
-            // Calculate actual overall attendance from subject data
-            const actualOverallAttendance = Math.round((totalPresentClasses / totalClasses) * 100);
-            const absentClasses = totalClasses - totalPresentClasses;
-
-            // Update overall summary with consistent data
-            document.getElementById('totalClasses').textContent = totalClasses;
-            document.getElementById('presentClasses').textContent = totalPresentClasses;
-            document.getElementById('absentClasses').textContent = absentClasses;
-            document.getElementById('attendancePercent').textContent = actualOverallAttendance + '%';
-
-            // Render subject cards with consistent data
-            subjectAttendances.forEach(subject => {
-                let attendanceClass = 'excellent';
-                if (subject.attendance >= 90) attendanceClass = 'excellent';
-                else if (subject.attendance >= 80) attendanceClass = 'good';
-                else if (subject.attendance >= 70) attendanceClass = 'average';
-                else attendanceClass = 'poor';
-
-                const card = document.createElement('div');
-                card.className = 'subject-card';
-                card.innerHTML = `
-                    <div class="subject-header">
                         <div class="subject-name">${subject.name}</div>
-                        <div class="attendance-badge ${attendanceClass}">${Math.round(subject.attendance)}%</div>
+                        <div class="attendance-badge ${attendanceClass}">${percent}%</div>
                     </div>
 
                     <div class="subject-stats">
@@ -443,67 +304,6 @@
                             <span class="stat-label">Present</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-value">${subject.absent}</span>
-                            <span class="stat-label">Absent</span>
-                        </div>
-                    </div>
-
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${subject.attendance}%"></div>
-                    </div>
-
-                    <div class="subject-details">
-                        <div class="detail-item">
-                            <span>Total Classes:</span>
-                            <span>${subjectTotalClasses}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>Attendance Rate:</span>
-                            <span>${Math.round(subject.attendance)}%</span>
-                        </div>
-                    </div>
-                `;
-
-                container.appendChild(card);
-            });
-        }
-
-        // Render subject data provided by backend as explicit per-subject entries
-        function renderFromSubjectData(subjectArray) {
-            const container = document.getElementById('subjectsGrid');
-            container.innerHTML = ''; // clear existing cards
-
-            const subjectTotalClasses = subjectArray.length ? (subjectArray[0].total || subjectArray[0].total_classes || 10) : 10;
-            let totalClasses = 0;
-            let totalPresent = 0;
-
-            subjectArray.forEach(subjectRaw => {
-                const subjectName = subjectRaw.name || subjectRaw.subject || 'Unknown';
-                    const present = subjectRaw.present != null ? subjectRaw.present : (subjectRaw.attended_classes != null ? subjectRaw.attended_classes : 0);
-                const total = subjectRaw.total != null ? subjectRaw.total : (subjectRaw.total_classes != null ? subjectRaw.total_classes : subjectTotalClasses);
-                const percent = total > 0 ? Math.round((present / total) * 100) : Math.round((subjectRaw.attendance || subjectRaw.attendance_percentage || 0));
-                const absent = subjectRaw.absent != null ? subjectRaw.absent : (total - present);
-
-                let attendanceClass = 'excellent';
-                if (percent >= 90) attendanceClass = 'excellent';
-                else if (percent >= 80) attendanceClass = 'good';
-                else if (percent >= 70) attendanceClass = 'average';
-                else attendanceClass = 'poor';
-
-                const card = document.createElement('div');
-                card.className = 'subject-card';
-                card.innerHTML = `
-                    <div class="subject-header">
-                        <div class="subject-name">${subjectName}</div>
-                        <div class="attendance-badge ${attendanceClass}">${percent}%</div>
-                    </div>
-
-                    <div class="subject-stats">
-                        <div class="stat-item">
-                            <span class="stat-value">${present}</span>
-                            <span class="stat-label">Present</span>
-                        </div>
-                        <div class="stat-item">
                             <span class="stat-value">${absent}</span>
                             <span class="stat-label">Absent</span>
                         </div>
@@ -516,7 +316,7 @@
                     <div class="subject-details">
                         <div class="detail-item">
                             <span>Total Classes:</span>
-                            <span>${total}</span>
+                            <span>${subject.total}</span>
                         </div>
                         <div class="detail-item">
                             <span>Attendance Rate:</span>
@@ -526,19 +326,11 @@
                 `;
 
                 container.appendChild(card);
-
-                totalClasses += total;
-                totalPresent += present;
             });
-
-            document.getElementById('totalClasses').textContent = totalClasses;
-            document.getElementById('presentClasses').textContent = totalPresent;
-            document.getElementById('absentClasses').textContent = totalClasses - totalPresent;
-            document.getElementById('attendancePercent').textContent = Math.round((totalPresent / totalClasses) * 100) + '%';
         }
 
         function goBack() {
-            window.location.href = 'index.html';
+            window.history.back();
         }
     </script>
 </body>
